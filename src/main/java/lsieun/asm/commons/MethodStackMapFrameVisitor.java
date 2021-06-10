@@ -22,10 +22,7 @@ public class MethodStackMapFrameVisitor extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
-        if (mv != null) {
-            mv = new MethodStackMapFrameAdapter(api, owner, access, name, descriptor, mv);
-        }
-        return mv;
+        return new MethodStackMapFrameAdapter(api, owner, access, name, descriptor, mv);
     }
 
     private static class MethodStackMapFrameAdapter extends AnalyzerAdapter {
@@ -73,12 +70,6 @@ public class MethodStackMapFrameVisitor extends ClassVisitor {
         @Override
         public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
             super.visitFieldInsn(opcode, owner, name, descriptor);
-            printStackMapFrame();
-        }
-
-        @Override
-        public void visitMethodInsn(int opcode, String owner, String name, String descriptor) {
-            super.visitMethodInsn(opcode, owner, name, descriptor);
             printStackMapFrame();
         }
 
@@ -137,8 +128,8 @@ public class MethodStackMapFrameVisitor extends ClassVisitor {
         }
 
         private void printStackMapFrame() {
-            String locals_str = locals == null ? "[]": list2Str(locals);
-            String stack_str = locals == null ? "[]": list2Str(stack);
+            String locals_str = locals == null ? "[]" : list2Str(locals);
+            String stack_str = locals == null ? "[]" : list2Str(stack);
             String line = String.format("%s %s", locals_str, stack_str);
             System.out.println(line);
         }
