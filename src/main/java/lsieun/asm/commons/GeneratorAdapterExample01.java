@@ -29,8 +29,7 @@ public class GeneratorAdapterExample01 {
         PrintWriter printWriter = new PrintWriter(System.out);
         TraceClassVisitor cv = new TraceClassVisitor(cw, printWriter);
 
-        cv.visit(V1_8, ACC_PUBLIC + ACC_SUPER, "sample/HelloWorld",
-                null, "java/lang/Object", null);
+        cv.visit(V1_8, ACC_PUBLIC + ACC_SUPER, "sample/HelloWorld", null, "java/lang/Object", null);
 
         {
             Method m1 = Method.getMethod("void <init> ()");

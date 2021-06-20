@@ -32,14 +32,11 @@ public class ClassPrintParameterVisitor extends ClassVisitor {
 
             Type methodType = Type.getMethodType(methodDesc);
             Type[] argumentTypes = methodType.getArgumentTypes();
-            for (Type t : argumentTypes) {
-                int size = t.getSize();
-                int opcode = t.getOpcode(ILOAD);
-                super.visitVarInsn(opcode, slotIndex);
+            for (int i = 0; i < argumentTypes.length; i++) {
+                Type t = argumentTypes[i];
+                loadArg(i);
                 box(t);
                 printValueOnStack("(Ljava/lang/Object;)V");
-
-                slotIndex += size;
             }
         }
 

@@ -1,14 +1,16 @@
-package run;
+package lsieun.asm.util;
 
-import lsieun.asm.core.MethodTimerVisitor3;
-import lsieun.asm.template.ClassPrintParameterVisitor;
+import lsieun.asm.core.MethodTimerVisitor;
 import lsieun.utils.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.util.TraceClassVisitor;
 
-public class HelloWorldTransformCore {
+import java.io.PrintWriter;
+
+public class TraceClassVisitorExample02Transform {
     public static void main(String[] args) {
         String relative_path = "sample/HelloWorld.class";
         String filepath = FileUtils.getFilePath(relative_path);
@@ -22,7 +24,9 @@ public class HelloWorldTransformCore {
 
         //（3）串连ClassVisitor
         int api = Opcodes.ASM9;
-        ClassVisitor cv = new MethodTimerVisitor3(api, cw);
+        PrintWriter printWriter = new PrintWriter(System.out);
+        TraceClassVisitor tcv = new TraceClassVisitor(cw, printWriter);
+        ClassVisitor cv = new MethodTimerVisitor(api, tcv);
 
         //（4）结合ClassReader和ClassVisitor
         int parsingOptions = ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES;

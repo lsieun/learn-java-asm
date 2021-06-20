@@ -23,7 +23,7 @@ public class MethodRemoveAddZeroVisitor extends ClassVisitor {
         return mv;
     }
 
-    private class MethodRemoveAddZeroAdapter extends MethodPatternAdapter {
+    private static class MethodRemoveAddZeroAdapter extends MethodPatternAdapter {
         private static final int SEEN_ICONST_0 = 1;
 
         public MethodRemoveAddZeroAdapter(int api, MethodVisitor methodVisitor) {
@@ -59,7 +59,7 @@ public class MethodRemoveAddZeroVisitor extends ClassVisitor {
         @Override
         protected void visitInsn() {
             if (state == SEEN_ICONST_0) {
-                super.visitInsn(ICONST_0);
+                mv.visitInsn(ICONST_0);
             }
             state = SEEN_NOTHING;
         }

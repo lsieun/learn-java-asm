@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class CheckClassAdapterExample01Core {
+public class CheckClassAdapterExample01Generate {
     public static void main(String[] args) throws Exception {
         // (1) 生成byte[]内容
         byte[] bytes = dump();
@@ -27,11 +27,6 @@ public class CheckClassAdapterExample01Core {
         // (2) 调用visitXxx()方法
         cw.visit(V1_8, ACC_PUBLIC + ACC_SUPER, "sample/HelloWorld",
                 null, "java/lang/Object", null);
-
-        {
-            FieldVisitor fv = cw.visitField(ACC_PRIVATE, "intValue", "I", null, null);
-            fv.visitEnd();
-        }
 
         {
             FieldVisitor fv = cw.visitField(ACC_PRIVATE, "intValue", "I", null, null);

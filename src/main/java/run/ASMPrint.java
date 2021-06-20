@@ -17,7 +17,7 @@ public class ASMPrint {
         // (1) 设置参数
         String className = "sample.HelloWorld";
         int parsingOptions = ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG;
-        boolean asmCode = false;
+        boolean asmCode = true;
 
         // (2) 打印结果
         Printer printer = asmCode ? new ASMifier() : new Textifier();
