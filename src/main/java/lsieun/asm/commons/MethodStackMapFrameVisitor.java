@@ -129,7 +129,7 @@ public class MethodStackMapFrameVisitor extends ClassVisitor {
 
         private void printStackMapFrame() {
             String locals_str = locals == null ? "[]" : list2Str(locals);
-            String stack_str = locals == null ? "[]" : list2Str(stack);
+            String stack_str = stack == null ? "[]" : list2Str(stack);
             String line = String.format("%s %s", locals_str, stack_str);
             System.out.println(line);
         }
