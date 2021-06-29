@@ -18,7 +18,7 @@ public class MethodExitVisitor extends ClassVisitor {
         return mv;
     }
 
-    private class MethodExitAdapter extends MethodVisitor {
+    private static class MethodExitAdapter extends MethodVisitor {
         public MethodExitAdapter(int api, MethodVisitor methodVisitor) {
             super(api, methodVisitor);
         }
