@@ -24,7 +24,7 @@ public class MethodRemoveNopVisitor extends ClassVisitor {
         return mv;
     }
 
-    private class MethodRemoveNopAdapter extends MethodVisitor {
+    private static class MethodRemoveNopAdapter extends MethodVisitor {
         public MethodRemoveNopAdapter(int api, MethodVisitor methodVisitor) {
             super(api, methodVisitor);
         }

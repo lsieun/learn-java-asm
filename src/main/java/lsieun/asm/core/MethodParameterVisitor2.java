@@ -2,7 +2,6 @@ package lsieun.asm.core;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -16,28 +15,31 @@ public class MethodParameterVisitor2 extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
         if (mv != null && !name.equals("<init>")) {
-            mv = new MethodParameterAdapter2(api, mv, access, name, descriptor);
+            boolean isAbstractMethod = (access & ACC_ABSTRACT) != 0;
+            boolean isNativeMethod = (access & ACC_NATIVE) != 0;
+            if (!isAbstractMethod && !isNativeMethod) {
+                mv = new MethodParameterAdapter2(api, mv, access, name, descriptor);
+            }
         }
         return mv;
     }
 
-    private class MethodParameterAdapter2 extends MethodVisitor {
+    private static class MethodParameterAdapter2 extends MethodVisitor {
         private final int methodAccess;
         private final String methodName;
         private final String methodDesc;
-        private final boolean isStatic;
 
         public MethodParameterAdapter2(int api, MethodVisitor mv, int methodAccess, String methodName, String methodDesc) {
             super(api, mv);
             this.methodAccess = methodAccess;
             this.methodName = methodName;
             this.methodDesc = methodDesc;
-            this.isStatic = ((methodAccess & Opcodes.ACC_STATIC) != 0);
         }
 
         @Override
         public void visitCode() {
             // 首先，处理自己的代码逻辑
+            boolean isStatic = ((methodAccess & ACC_STATIC) != 0);
             int slotIndex = isStatic ? 0 : 1;
 
             printMessage("Method Enter: " + methodName + methodDesc);

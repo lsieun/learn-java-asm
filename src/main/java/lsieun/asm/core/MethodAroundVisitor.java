@@ -24,7 +24,7 @@ public class MethodAroundVisitor extends ClassVisitor {
         return mv;
     }
 
-    private class MethodAroundAdapter extends MethodVisitor {
+    private static class MethodAroundAdapter extends MethodVisitor {
         public MethodAroundAdapter(int api, MethodVisitor methodVisitor) {
             super(api, methodVisitor);
         }

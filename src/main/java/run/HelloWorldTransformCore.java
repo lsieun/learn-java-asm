@@ -1,12 +1,9 @@
 package run;
 
-import lsieun.asm.core.MethodTimerVisitor3;
-import lsieun.asm.template.ClassPrintParameterVisitor;
+import lsieun.asm.core.*;
+import lsieun.asm.template.*;
 import lsieun.utils.FileUtils;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
 
 public class HelloWorldTransformCore {
     public static void main(String[] args) {
@@ -22,7 +19,8 @@ public class HelloWorldTransformCore {
 
         //（3）串连ClassVisitor
         int api = Opcodes.ASM9;
-        ClassVisitor cv = new MethodTimerVisitor3(api, cw);
+        ClassVisitor cv = new MethodRemovePrintVisitor(api, cw);;
+
 
         //（4）结合ClassReader和ClassVisitor
         int parsingOptions = ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES;

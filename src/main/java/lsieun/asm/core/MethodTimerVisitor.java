@@ -45,7 +45,7 @@ public class MethodTimerVisitor extends ClassVisitor {
         super.visitEnd();
     }
 
-    private class MethodTimerAdapter extends MethodVisitor {
+    private static class MethodTimerAdapter extends MethodVisitor {
         private final String owner;
 
         public MethodTimerAdapter(int api, MethodVisitor mv, String owner) {
