@@ -77,8 +77,8 @@ public class StaticInitMergerExample01 {
             String item = interface_list.get(i);
             interfaces[i] = item;
         }
-        ClassVisitor cv = new ClassMergeVisitor(API_VERSION, cw, cn);
-        cv = new ClassAddInterfaceVisitor(API_VERSION, cv, interfaces);
+        ClassMergeVisitor cmv = new ClassMergeVisitor(API_VERSION, cw, cn);
+        ClassAddInterfaceVisitor cv = new ClassAddInterfaceVisitor(API_VERSION, cmv, interfaces);
 
         //（4）两者进行结合
         int parsingOptions = ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES;

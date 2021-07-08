@@ -5,6 +5,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 
+import static org.objectweb.asm.Opcodes.*;
+
 public class ClassPrintParameterVisitor extends ClassVisitor {
     public ClassPrintParameterVisitor(int api, ClassVisitor classVisitor) {
         super(api, classVisitor);
@@ -14,7 +16,11 @@ public class ClassPrintParameterVisitor extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
         if (mv != null) {
-            mv = new MethodPrintParameterAdapter(api, mv, access, name, descriptor);
+            boolean isAbstractMethod = (access & ACC_ABSTRACT) != 0;
+            boolean isNativeMethod = (access & ACC_NATIVE) != 0;
+            if (!isAbstractMethod && !isNativeMethod) {
+                mv = new MethodPrintParameterAdapter(api, mv, access, name, descriptor);
+            }
         }
         return mv;
     }
@@ -26,12 +32,9 @@ public class ClassPrintParameterVisitor extends ClassVisitor {
 
         @Override
         protected void onMethodEnter() {
-            int slotIndex = (methodAccess & ACC_STATIC) != 0 ? 0 : 1;
-
             printMessage("Method Enter: " + getName() + methodDesc);
 
-            Type methodType = Type.getMethodType(methodDesc);
-            Type[] argumentTypes = methodType.getArgumentTypes();
+            Type[] argumentTypes = getArgumentTypes();
             for (int i = 0; i < argumentTypes.length; i++) {
                 Type t = argumentTypes[i];
                 loadArg(i);
@@ -60,7 +63,7 @@ public class ClassPrintParameterVisitor extends ClassVisitor {
                 else {
                     dup();
                 }
-                box(Type.getReturnType(this.methodDesc));
+                box(getReturnType());
             }
             printValueOnStack("(Ljava/lang/Object;)V");
         }

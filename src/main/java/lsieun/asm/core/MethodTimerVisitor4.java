@@ -5,6 +5,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 
+import static org.objectweb.asm.Opcodes.*;
+
 public class MethodTimerVisitor4 extends ClassVisitor {
     public MethodTimerVisitor4(int api, ClassVisitor classVisitor) {
         super(api, classVisitor);
@@ -14,12 +16,16 @@ public class MethodTimerVisitor4 extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
         if (mv != null) {
-            mv = new MethodTimerAdapter4(api, mv, access, name, descriptor);
+            boolean isAbstractMethod = (access & ACC_ABSTRACT) != 0;
+            boolean isNativeMethod = (access & ACC_NATIVE) != 0;
+            if (!isAbstractMethod && !isNativeMethod) {
+                mv = new MethodTimerAdapter4(api, mv, access, name, descriptor);
+            }
         }
         return mv;
     }
 
-    private class MethodTimerAdapter4 extends AdviceAdapter {
+    private static class MethodTimerAdapter4 extends AdviceAdapter {
         private int slotIndex;
 
         public MethodTimerAdapter4(int api, MethodVisitor mv, int access, String name, String descriptor) {
