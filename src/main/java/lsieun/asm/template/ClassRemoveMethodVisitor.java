@@ -1,4 +1,4 @@
-package lsieun.asm.core;
+package lsieun.asm.template;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -15,8 +15,7 @@ public class ClassRemoveMethodVisitor extends ClassVisitor {
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-        if(name.equals(methodName) && descriptor.equals(methodDesc)) {
-            // do not delegate to next visitor -> this removes the method
+        if (name.equals(methodName) && descriptor.equals(methodDesc)) {
             return null;
         }
         return super.visitMethod(access, name, descriptor, signature, exceptions);

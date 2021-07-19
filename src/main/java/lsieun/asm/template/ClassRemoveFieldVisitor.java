@@ -1,4 +1,4 @@
-package lsieun.asm.core;
+package lsieun.asm.template;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;

@@ -1,4 +1,4 @@
-package lsieun.asm.core;
+package lsieun.asm.template;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
@@ -10,8 +10,8 @@ import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class MethodTryCatchVisitor extends ClassVisitor {
-    public MethodTryCatchVisitor(int api, ClassVisitor classVisitor) {
+public class MethodWithSameTryCatchLogicVisitor extends ClassVisitor {
+    public MethodWithSameTryCatchLogicVisitor(int api, ClassVisitor classVisitor) {
         super(api, classVisitor);
     }
 
@@ -22,19 +22,19 @@ public class MethodTryCatchVisitor extends ClassVisitor {
             boolean isAbstractMethod = (access & ACC_ABSTRACT) != 0;
             boolean isNativeMethod = (access & ACC_NATIVE) != 0;
             if (!isAbstractMethod && !isNativeMethod) {
-                mv = new MethodTryCatchAdapter(api, mv, access, descriptor);
+                mv = new MethodWithSameTryCatchLogicAdapter(api, mv, access, descriptor);
             }
         }
         return mv;
     }
 
 
-    private static class MethodTryCatchAdapter extends MethodVisitor {
+    private static class MethodWithSameTryCatchLogicAdapter extends MethodVisitor {
         private final int methodAccess;
         private final String methodDesc;
         private final List<Label> handlerList = new ArrayList<>();
 
-        public MethodTryCatchAdapter(int api, MethodVisitor methodVisitor, int methodAccess, String methodDesc) {
+        public MethodWithSameTryCatchLogicAdapter(int api, MethodVisitor methodVisitor, int methodAccess, String methodDesc) {
             super(api, methodVisitor);
             this.methodAccess = methodAccess;
             this.methodDesc = methodDesc;
