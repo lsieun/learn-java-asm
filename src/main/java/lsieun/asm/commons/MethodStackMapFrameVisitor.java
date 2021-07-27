@@ -121,12 +121,6 @@ public class MethodStackMapFrameVisitor extends ClassVisitor {
             printStackMapFrame();
         }
 
-        @Override
-        public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
-            super.visitTryCatchBlock(start, end, handler, type);
-            printStackMapFrame();
-        }
-
         private void printStackMapFrame() {
             String locals_str = locals == null ? "[]" : list2Str(locals);
             String stack_str = stack == null ? "[]" : list2Str(stack);

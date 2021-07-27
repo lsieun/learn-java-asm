@@ -1,9 +1,6 @@
 package lsieun.asm.template;
 
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -24,19 +21,24 @@ public class MethodWithWholeTryCatchVisitor extends ClassVisitor {
             boolean isAbstractMethod = (access & ACC_ABSTRACT) != 0;
             boolean isNativeMethod = (access & ACC_NATIVE) != 0;
             if (!isAbstractMethod && !isNativeMethod) {
-                mv = new MethodWithWholeTryCatchAdapter(api, mv);
+                mv = new MethodWithWholeTryCatchAdapter(api, mv, access, descriptor);
             }
         }
         return mv;
     }
 
     private static class MethodWithWholeTryCatchAdapter extends MethodVisitor {
-        private Label startLabel = new Label();
-        private Label endLabel = new Label();
-        private Label handlerLabel = new Label();
+        private final int methodAccess;
+        private final String methodDesc;
 
-        public MethodWithWholeTryCatchAdapter(int api, MethodVisitor methodVisitor) {
+        private final Label startLabel = new Label();
+        private final Label endLabel = new Label();
+        private final Label handlerLabel = new Label();
+
+        public MethodWithWholeTryCatchAdapter(int api, MethodVisitor methodVisitor, int methodAccess, String methodDesc) {
             super(api, methodVisitor);
+            this.methodAccess = methodAccess;
+            this.methodDesc = methodDesc;
         }
 
         public void visitCode() {
@@ -56,9 +58,12 @@ public class MethodWithWholeTryCatchVisitor extends ClassVisitor {
 
             // (3) handlerLabel
             super.visitLabel(handlerLabel);
+            int localIndex = getLocalIndex();
+            super.visitVarInsn(ASTORE, localIndex);
+            super.visitVarInsn(ALOAD, localIndex);
             super.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-            super.visitLdcInsn("catch Exception");
-            super.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
+            super.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Exception", "printStackTrace", "(Ljava/io/PrintStream;)V", false);
+            super.visitVarInsn(ALOAD, localIndex);
             super.visitInsn(Opcodes.ATHROW);
 
             // (4) visitTryCatchBlock
@@ -66,6 +71,18 @@ public class MethodWithWholeTryCatchVisitor extends ClassVisitor {
 
             // 其次，调用父类的方法实现
             super.visitMaxs(maxStack, maxLocals);
+        }
+
+        private int getLocalIndex() {
+            Type t = Type.getType(methodDesc);
+            Type[] argumentTypes = t.getArgumentTypes();
+
+            boolean isStaticMethod = ((methodAccess & ACC_STATIC) != 0);
+            int localIndex = isStaticMethod ? 0 : 1;
+            for (Type argType : argumentTypes) {
+                localIndex += argType.getSize();
+            }
+            return localIndex;
         }
     }
 }
