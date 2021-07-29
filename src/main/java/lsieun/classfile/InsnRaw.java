@@ -165,7 +165,7 @@ public class InsnRaw {
                 case 20: // ldc2_w
                 {
                     int cpIndex = readUnsignedShort(currentOffSet + 1);
-                    item = visitCPIns(currentOffSet, "cpIndex", cpIndex);
+                    item = visitCPIns(currentOffSet, "ldc2_w", cpIndex);
                     size = 3;
                     break;
                 }
@@ -1288,7 +1288,7 @@ public class InsnRaw {
 
                     StringBuilder sb = new StringBuilder();
                     Formatter fm = new Formatter(sb);
-                    fm.format(SWITCH_FORMAT, currentOffSet, "tableswitch");
+                    fm.format(SWITCH_FORMAT, currentOffSet, "lookupswitch");
                     fm.format(SWITCH_START_FORMAT);
                     for (int i = 0; i < npairs; i++) {
                         int caseConst = readInt(currentOffSet + pad + 1 + 8 + i * 8);
