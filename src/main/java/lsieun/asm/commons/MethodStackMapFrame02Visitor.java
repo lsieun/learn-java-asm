@@ -5,15 +5,14 @@ import lsieun.classfile.InsnRaw;
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MethodStackMapFrameAdvancedVisitor extends ClassVisitor {
+public class MethodStackMapFrame02Visitor extends ClassVisitor {
     private String owner;
     private final ClassFile classFile;
     private int methodIndex = 0;
 
-    public MethodStackMapFrameAdvancedVisitor(int api, ClassVisitor classVisitor, byte[] bytes) {
+    public MethodStackMapFrame02Visitor(int api, ClassVisitor classVisitor, byte[] bytes) {
         super(api, classVisitor);
         this.classFile = new ClassFile(bytes);
     }
@@ -30,11 +29,11 @@ public class MethodStackMapFrameAdvancedVisitor extends ClassVisitor {
         byte[] code_bytes = classFile.getCode(methodIndex++);
         InsnRaw insnRaw = new InsnRaw(code_bytes);
         List<String> list = insnRaw.getList();
-        mv = new MethodStackMapFrameAdvancedAdapter(api, owner, access, name, descriptor, mv, list);
+        mv = new MethodStackMapFrame02Adapter(api, owner, access, name, descriptor, mv, list);
         return mv;
     }
 
-    private static class MethodStackMapFrameAdvancedAdapter extends AnalyzerAdapter {
+    private static class MethodStackMapFrame02Adapter extends AnalyzerAdapter {
         private static final String FORMAT = "%-30s // %s";
         private static final String START = "{";
         private static final String STOP = "}";
@@ -47,7 +46,7 @@ public class MethodStackMapFrameAdvancedVisitor extends ClassVisitor {
         private final List<String> insnList;
         private int insnIndex = 0;
 
-        public MethodStackMapFrameAdvancedAdapter(int api, String owner, int access, String name, String descriptor, MethodVisitor methodVisitor, List<String> insnList) {
+        public MethodStackMapFrame02Adapter(int api, String owner, int access, String name, String descriptor, MethodVisitor methodVisitor, List<String> insnList) {
             super(api, owner, access, name, descriptor, methodVisitor);
             this.methodAccess = access;
             this.methodName = name;
