@@ -10,6 +10,9 @@ public class HelloWorldTransformCore {
         String relative_path = "sample/HelloWorld.class";
         String filepath = FileUtils.getFilePath(relative_path);
         byte[] bytes1 = FileUtils.readBytes(filepath);
+        if (bytes1 == null) {
+            throw new RuntimeException("bytes1 is null");
+        }
 
         //（1）构建ClassReader
         ClassReader cr = new ClassReader(bytes1);
@@ -19,7 +22,7 @@ public class HelloWorldTransformCore {
 
         //（3）串连ClassVisitor
         int api = Opcodes.ASM9;
-        ClassVisitor cv = new MethodRemovePrintVisitor(api, cw);;
+        ClassVisitor cv = new ClassChangeVersionVisitor(api, cw);
 
 
         //（4）结合ClassReader和ClassVisitor
