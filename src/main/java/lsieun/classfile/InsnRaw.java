@@ -9,7 +9,7 @@ public class InsnRaw {
     private static final String ONE_ARG_FORMAT = "%04d: %-15s %-4s";
     private static final String TWO_ARG_FORMAT = "%04d: %-10s %-4s %-4s";
     private static final String CP_INS_FORMAT = "%04d: %-15s #%-3s";
-    private static final String NEW_ARRAY_FORMAT = "%04d: %-15s %-4s";
+    private static final String NEW_ARRAY_FORMAT = "%04d: %-10s %-9s";
     private static final String SWITCH_FORMAT = "%04d: %-20s%n";
     private static final String SWITCH_START_FORMAT = "      {%n";
     private static final String CASE_FORMAT = "      %9s: %d%n";
@@ -177,7 +177,7 @@ public class InsnRaw {
                         wide = false;
                         size = 3;
                     }else {
-                        localIndex = readByte(currentOffSet + 1);
+                        localIndex = readUnsignedByte(currentOffSet + 1);
                         size = 2;
                     }
                     String firstArg = String.valueOf(localIndex);
@@ -192,7 +192,7 @@ public class InsnRaw {
                         wide = false;
                         size = 3;
                     }else {
-                        localIndex = readByte(currentOffSet + 1);
+                        localIndex = readUnsignedByte(currentOffSet + 1);
                         size = 2;
                     }
                     String firstArg = String.valueOf(localIndex);
@@ -207,7 +207,7 @@ public class InsnRaw {
                         wide = false;
                         size = 3;
                     }else {
-                        localIndex = readByte(currentOffSet + 1);
+                        localIndex = readUnsignedByte(currentOffSet + 1);
                         size = 2;
                     }
                     String firstArg = String.valueOf(localIndex);
@@ -222,7 +222,7 @@ public class InsnRaw {
                         wide = false;
                         size = 3;
                     }else {
-                        localIndex = readByte(currentOffSet + 1);
+                        localIndex = readUnsignedByte(currentOffSet + 1);
                         size = 2;
                     }
                     String firstArg = String.valueOf(localIndex);
@@ -237,7 +237,7 @@ public class InsnRaw {
                         wide = false;
                         size = 3;
                     }else {
-                        localIndex = readByte(currentOffSet + 1);
+                        localIndex = readUnsignedByte(currentOffSet + 1);
                         size = 2;
                     }
                     String firstArg = String.valueOf(localIndex);
@@ -420,7 +420,7 @@ public class InsnRaw {
                         wide = false;
                         size = 3;
                     }else {
-                        localIndex = readByte(currentOffSet + 1);
+                        localIndex = readUnsignedByte(currentOffSet + 1);
                         size = 2;
                     }
                     String firstArg = String.valueOf(localIndex);
@@ -435,7 +435,7 @@ public class InsnRaw {
                         wide = false;
                         size = 3;
                     }else {
-                        localIndex = readByte(currentOffSet + 1);
+                        localIndex = readUnsignedByte(currentOffSet + 1);
                         size = 2;
                     }
                     String firstArg = String.valueOf(localIndex);
@@ -450,7 +450,7 @@ public class InsnRaw {
                         wide = false;
                         size = 3;
                     }else {
-                        localIndex = readByte(currentOffSet + 1);
+                        localIndex = readUnsignedByte(currentOffSet + 1);
                         size = 2;
                     }
                     String firstArg = String.valueOf(localIndex);
@@ -465,7 +465,7 @@ public class InsnRaw {
                         wide = false;
                         size = 3;
                     }else {
-                        localIndex = readByte(currentOffSet + 1);
+                        localIndex = readUnsignedByte(currentOffSet + 1);
                         size = 2;
                     }
                     String firstArg = String.valueOf(localIndex);
@@ -480,7 +480,7 @@ public class InsnRaw {
                         wide = false;
                         size = 3;
                     }else {
-                        localIndex = readByte(currentOffSet + 1);
+                        localIndex = readUnsignedByte(currentOffSet + 1);
                         size = 2;
                     }
                     String firstArg = String.valueOf(localIndex);
@@ -1418,41 +1418,41 @@ public class InsnRaw {
                     final String firstArg;
                     switch (atype) {
                         case 4: {
-                            firstArg = "boolean";
+                            firstArg = "4 (boolean)";
                             break;
                         }
                         case 5: {
-                            firstArg = "char";
+                            firstArg = "5 (char)";
                             break;
                         }
                         case 6: {
-                            firstArg = "float";
+                            firstArg = "6 (float)";
                             break;
                         }
                         case 7: {
-                            firstArg = "double";
+                            firstArg = "7 (double)";
                             break;
                         }
                         case 8: {
-                            firstArg = "byte";
+                            firstArg = "8 (byte)";
                             break;
                         }
                         case 9: {
-                            firstArg = "short";
+                            firstArg = "9 (short)";
                             break;
                         }
                         case 10: {
-                            firstArg = "int";
+                            firstArg = "10 (int)";
                             break;
                         }
                         case 11: {
-                            firstArg = "long";
+                            firstArg = "11 (long)";
                             break;
                         }
                         default:
                             throw new RuntimeException("atype is not supported: " + atype);
                     }
-                    item = toOneArgIns(currentOffSet, "newarray", firstArg);
+                    item = String.format(NEW_ARRAY_FORMAT, currentOffSet, "newarray", firstArg);
                     size = 2;
                     break;
                 }

@@ -3,8 +3,8 @@ package run;
 import lsieun.utils.OpcodeConst;
 
 public class OpcodeRun {
-    private static int start = 198;
-    private static int stop = 201;
+    private static int start = 0;
+    private static int stop = 256;
 
     public static void main(String[] args) throws Exception {
         printOpcode();
