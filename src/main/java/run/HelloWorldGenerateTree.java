@@ -23,6 +23,7 @@ public class HelloWorldGenerateTree {
         cn.version = V1_8;
         cn.access = ACC_PUBLIC | ACC_SUPER;
         cn.name = "sample/HelloWorld";
+        cn.signature = null;
         cn.superName = "java/lang/Object";
 
         {
@@ -33,50 +34,23 @@ public class HelloWorldGenerateTree {
             il.add(new VarInsnNode(ALOAD, 0));
             il.add(new MethodInsnNode(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false));
             il.add(new InsnNode(RETURN));
-            mn1.maxLocals = 0;
-            mn1.maxStack = 0;
+
+            mn1.maxStack = 1;
+            mn1.maxLocals = 1;
         }
 
         {
             MethodNode mn2 = new MethodNode(ACC_PUBLIC, "test", "()V", null, null);
             cn.methods.add(mn2);
 
-            LabelNode startLabelNode = new LabelNode();
-            LabelNode endLabelNode = new LabelNode();
-            LabelNode handlerLabelNode = new LabelNode();
-            LabelNode returnLabelNode = new LabelNode();
-            TryCatchBlockNode tryCatchBlockNode = new TryCatchBlockNode(startLabelNode, endLabelNode, handlerLabelNode, "java/lang/InterruptedException");
-            mn2.tryCatchBlocks.add(tryCatchBlockNode);
-
-
             InsnList il = mn2.instructions;
-            il.add(startLabelNode);
             il.add(new FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
-            il.add(new LdcInsnNode("Before Sleep"));
+            il.add(new LdcInsnNode("Hello World"));
             il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false));
-            il.add(new LdcInsnNode(Long.valueOf(1000L)));
-            il.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Thread", "sleep", "(J)V", false));
-            il.add(new FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
-            il.add(new LdcInsnNode("After Sleep"));
-            il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false));
-
-
-            il.add(endLabelNode);
-            il.add(new JumpInsnNode(GOTO, returnLabelNode)); // goto jump
-
-
-            il.add(handlerLabelNode);
-            il.add(new VarInsnNode(ASTORE, 1));
-            il.add(new VarInsnNode(ALOAD, 1));
-            il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/InterruptedException", "printStackTrace", "()V", false));
-
-
-            il.add(returnLabelNode); // return label
             il.add(new InsnNode(RETURN));
 
-
-            mn2.maxLocals = 0;
-            mn2.maxStack = 0;
+            mn2.maxStack = 2;
+            mn2.maxLocals = 1;
         }
 
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
