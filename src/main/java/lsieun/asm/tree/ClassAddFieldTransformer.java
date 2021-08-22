@@ -17,6 +17,7 @@ public class ClassAddFieldTransformer extends ClassTransformer {
 
     @Override
     public void transform(ClassNode cn) {
+        // 首先，处理自己的代码逻辑
         boolean isPresent = false;
         for (FieldNode fn : cn.fields) {
             if (fieldName.equals(fn.name)) {
@@ -27,6 +28,8 @@ public class ClassAddFieldTransformer extends ClassTransformer {
         if (!isPresent) {
             cn.fields.add(new FieldNode(fieldAccess, fieldName, fieldDesc, null, null));
         }
+
+        // 其次，调用父类的方法实现
         super.transform(cn);
     }
 }

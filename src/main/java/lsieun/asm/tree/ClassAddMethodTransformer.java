@@ -17,6 +17,7 @@ public class ClassAddMethodTransformer extends ClassTransformer {
 
     @Override
     public void transform(ClassNode cn) {
+        // 首先，处理自己的代码逻辑
         boolean isPresent = false;
         for (MethodNode mn : cn.methods) {
             if (methodName.equals(mn.name) && methodDesc.equals(mn.desc)) {
@@ -25,8 +26,16 @@ public class ClassAddMethodTransformer extends ClassTransformer {
             }
         }
         if (!isPresent) {
-            cn.methods.add(new MethodNode(methodAccess, methodName, methodDesc, null, null));
+            MethodNode mn = new MethodNode(methodAccess, methodName, methodDesc, null, null);
+            cn.methods.add(mn);
+            generateMethodBody(mn);
         }
+
+        // 其次，调用父类的方法实现
         super.transform(cn);
+    }
+
+    protected void generateMethodBody(MethodNode mn) {
+        // empty method
     }
 }

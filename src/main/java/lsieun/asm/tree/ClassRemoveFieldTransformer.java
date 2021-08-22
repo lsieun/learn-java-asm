@@ -17,6 +17,7 @@ public class ClassRemoveFieldTransformer extends ClassTransformer {
 
     @Override
     public void transform(ClassNode cn) {
+        // 首先，处理自己的代码逻辑
         Iterator<FieldNode> it = cn.fields.iterator();
         while (it.hasNext()) {
             FieldNode fn = it.next();
@@ -24,6 +25,8 @@ public class ClassRemoveFieldTransformer extends ClassTransformer {
                 it.remove();
             }
         }
+
+        // 其次，调用父类的方法实现
         super.transform(cn);
     }
 }

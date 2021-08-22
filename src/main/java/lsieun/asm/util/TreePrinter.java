@@ -372,7 +372,7 @@ public class TreePrinter extends Printer {
         }
         String defautLabel = declareLabelNode(dflt);
 
-        StringBuilder labelsString = new StringBuilder("new Label[] {");
+        StringBuilder labelsString = new StringBuilder("new LabelNode[] {");
         for (int i = 0; i < labels.length; ++i) {
             labelsString.append(i == 0 ? " " : ", ");
             labelsString.append(toLabelName(labels[i]));
@@ -402,7 +402,7 @@ public class TreePrinter extends Printer {
         }
         String defautLabel = declareLabelNode(dflt);
 
-        StringBuilder labelsString = new StringBuilder("new Label[] {");
+        StringBuilder labelsString = new StringBuilder("new LabelNode[] {");
         for (int i = 0; i < labels.length; ++i) {
             labelsString.append(i == 0 ? " " : ", ");
             labelsString.append(toLabelName(labels[i]));
@@ -439,7 +439,7 @@ public class TreePrinter extends Printer {
             fm.format("        %s%n", handlerLabelNodeString);
         }
 
-        fm.format("        il.add(new TryCatchBlockNode(%s, %s, %s, %s));%n", toLabelName(start), toLabelName(end), toLabelName(handler), toConstant(type));
+        fm.format("        methodNode.tryCatchBlocks.add(new TryCatchBlockNode(%s, %s, %s, %s));%n", toLabelName(start), toLabelName(end), toLabelName(handler), toConstant(type));
         text.add(stringBuilder.toString());
     }
 

@@ -1,14 +1,13 @@
-package lsieun.asm.tree.timer;
+package lsieun.asm.tree;
 
-import lsieun.asm.tree.ClassTransformer;
 import org.objectweb.asm.tree.*;
 
 import java.util.ListIterator;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class ClassTimerTransformer extends ClassTransformer {
-    public ClassTimerTransformer(ClassTransformer ct) {
+public class MethodAddTimerTransformer extends ClassTransformer {
+    public MethodAddTimerTransformer(ClassTransformer ct) {
         super(ct);
     }
 
@@ -18,11 +17,11 @@ public class ClassTimerTransformer extends ClassTransformer {
             if ("<init>".equals(mn.name) || "<clinit>".equals(mn.name)) {
                 continue;
             }
-            InsnList insns = mn.instructions;
-            if (insns.size() == 0) {
+            InsnList instructions = mn.instructions;
+            if (instructions.size() == 0) {
                 continue;
             }
-            ListIterator<AbstractInsnNode> it = insns.iterator();
+            ListIterator<AbstractInsnNode> it = instructions.iterator();
             while (it.hasNext()) {
                 AbstractInsnNode item = it.next();
                 int opcode = item.getOpcode();
@@ -32,7 +31,7 @@ public class ClassTimerTransformer extends ClassTransformer {
                     il.add(new MethodInsnNode(INVOKESTATIC, "java/lang/System", "currentTimeMillis", "()J"));
                     il.add(new InsnNode(LADD));
                     il.add(new FieldInsnNode(PUTSTATIC, cn.name, "timer", "J"));
-                    insns.insert(item.getPrevious(), il);
+                    instructions.insert(item.getPrevious(), il);
                 }
             }
 
@@ -41,7 +40,7 @@ public class ClassTimerTransformer extends ClassTransformer {
             il.add(new MethodInsnNode(INVOKESTATIC, "java/lang/System", "currentTimeMillis", "()J"));
             il.add(new InsnNode(LSUB));
             il.add(new FieldInsnNode(PUTSTATIC, cn.name, "timer", "J"));
-            insns.insert(il);
+            instructions.insert(il);
 
             mn.maxLocals = 0;
             mn.maxStack = 0;

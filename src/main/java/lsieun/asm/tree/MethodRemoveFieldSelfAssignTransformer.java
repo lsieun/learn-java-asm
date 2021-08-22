@@ -4,9 +4,9 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 
-public class ClassRemoveGetFieldPutFieldTransformer extends ClassTransformer {
+public class MethodRemoveFieldSelfAssignTransformer extends ClassTransformer {
 
-    public ClassRemoveGetFieldPutFieldTransformer(ClassTransformer ct) {
+    public MethodRemoveFieldSelfAssignTransformer(ClassTransformer ct) {
         super(ct);
     }
 
@@ -16,12 +16,12 @@ public class ClassRemoveGetFieldPutFieldTransformer extends ClassTransformer {
             if ("<init>".equals(mn.name) || "<clinit>".equals(mn.name)) {
                 continue;
             }
-            InsnList insns = mn.instructions;
-            if (insns.size() == 0) {
+            InsnList instructions = mn.instructions;
+            if (instructions.size() == 0) {
                 continue;
             }
-            MethodTransformer mt = new MethodRemoveGetFieldPutFieldTransformer(null);
-            mt.transform(mn);
+            MethodTransformer mc = new MethodRemoveFieldSelfAssignConverter(null);
+            mc.transform(mn);
         }
 
         super.transform(cn);

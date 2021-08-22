@@ -6,8 +6,8 @@ import java.util.ListIterator;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class MethodRemoveGetFieldPutFieldTransformer extends MethodTransformer {
-    public MethodRemoveGetFieldPutFieldTransformer(MethodTransformer mt) {
+public class MethodRemoveFieldSelfAssignConverter extends MethodTransformer {
+    public MethodRemoveFieldSelfAssignConverter(MethodTransformer mt) {
         super(mt);
     }
 

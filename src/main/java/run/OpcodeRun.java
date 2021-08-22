@@ -2,6 +2,9 @@ package run;
 
 import lsieun.utils.OpcodeConst;
 
+/**
+ * Print opcode between {@link #start} and {@link #stop}.
+ */
 public class OpcodeRun {
     private static int start = 0;
     private static int stop = 256;

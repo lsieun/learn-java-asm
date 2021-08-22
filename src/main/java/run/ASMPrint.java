@@ -10,7 +10,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * 这里的代码是参考自{@link org.objectweb.asm.util.Printer#main}
+ * 这里的代码是参考自{@link org.objectweb.asm.util.Printer}的main方法。
+ *
+ * @see LambdaRun
+ * @see TreePrinterRun
+ * @see Printer
  */
 public class ASMPrint {
     public static void main(String[] args) throws IOException {

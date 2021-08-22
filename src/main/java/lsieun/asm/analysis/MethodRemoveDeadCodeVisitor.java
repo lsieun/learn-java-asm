@@ -3,10 +3,10 @@ package lsieun.asm.analysis;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-public class ClassRemoveDeadCodeVisitor extends ClassVisitor {
+public class MethodRemoveDeadCodeVisitor extends ClassVisitor {
     private String owner;
 
-    public ClassRemoveDeadCodeVisitor(int api, ClassVisitor cv) {
+    public MethodRemoveDeadCodeVisitor(int api, ClassVisitor cv) {
         super(api, cv);
     }
 
