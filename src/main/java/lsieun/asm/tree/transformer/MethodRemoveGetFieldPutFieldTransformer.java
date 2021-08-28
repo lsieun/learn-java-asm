@@ -1,4 +1,4 @@
-package lsieun.asm.tree;
+package lsieun.asm.tree.transformer;
 
 import org.objectweb.asm.tree.*;
 
@@ -6,8 +6,8 @@ import java.util.ListIterator;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class MethodRemoveFieldSelfAssignConverter extends MethodTransformer {
-    public MethodRemoveFieldSelfAssignConverter(MethodTransformer mt) {
+public class MethodRemoveGetFieldPutFieldTransformer extends MethodTransformer {
+    public MethodRemoveGetFieldPutFieldTransformer(MethodTransformer mt) {
         super(mt);
     }
 

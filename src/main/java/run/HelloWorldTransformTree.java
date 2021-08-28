@@ -1,5 +1,6 @@
 package run;
 
+import lsieun.asm.analysis.*;
 import lsieun.asm.tree.*;
 import lsieun.utils.FileUtils;
 import org.objectweb.asm.ClassReader;
@@ -19,20 +20,18 @@ public class HelloWorldTransformTree {
         // (1)构建ClassReader
         ClassReader cr = new ClassReader(bytes1);
 
-        // (2) 构建ClassNode
-        int api = Opcodes.ASM9;
-        ClassNode cn = new ClassNode(api);
-        cr.accept(cn, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
-
-        // (3) 进行transform
-        ClassTransformer ct = new MethodOptimizeJumpTransformer(null);
-        ct.transform(cn);
-
-        // (4) 构建ClassWriter
+        // (2)构建ClassWriter
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-        cn.accept(cw);
 
-        // (5) 生成byte[]内容输出
+        // (3)串连ClassNode
+        int api = Opcodes.ASM9;
+        ClassNode cn = new RemoveUnusedCastNode(api, cw);
+
+        //（4）结合ClassReader和ClassNode
+        int parsingOptions = ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES;
+        cr.accept(cn, parsingOptions);
+
+        // (5) 生成byte[]
         byte[] bytes2 = cw.toByteArray();
 
         FileUtils.writeBytes(filepath, bytes2);

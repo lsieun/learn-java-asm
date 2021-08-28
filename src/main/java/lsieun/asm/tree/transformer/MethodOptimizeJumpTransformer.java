@@ -1,22 +1,19 @@
-package lsieun.asm.tree;
+package lsieun.asm.tree.transformer;
 
 import org.objectweb.asm.tree.*;
 
-import java.util.ListIterator;
-
 import static org.objectweb.asm.Opcodes.*;
 
-public class MethodOptimizeJumpConverter extends MethodTransformer {
-    public MethodOptimizeJumpConverter(MethodTransformer mt) {
+public class MethodOptimizeJumpTransformer extends MethodTransformer {
+    public MethodOptimizeJumpTransformer(MethodTransformer mt) {
         super(mt);
     }
 
     @Override
     public void transform(MethodNode mn) {
+        // 首先，处理自己的代码逻辑
         InsnList instructions = mn.instructions;
-        ListIterator<AbstractInsnNode> it = instructions.iterator();
-        while (it.hasNext()) {
-            AbstractInsnNode insnNode = it.next();
+        for (AbstractInsnNode insnNode : instructions) {
             if (insnNode instanceof JumpInsnNode) {
                 JumpInsnNode jumpInsnNode = (JumpInsnNode) insnNode;
                 LabelNode label = jumpInsnNode.label;
@@ -26,6 +23,7 @@ public class MethodOptimizeJumpConverter extends MethodTransformer {
                     while (target != null && target.getOpcode() < 0) {
                         target = target.getNext();
                     }
+
                     if (target != null && target.getOpcode() == GOTO) {
                         label = ((JumpInsnNode) target).label;
                     }
@@ -33,6 +31,7 @@ public class MethodOptimizeJumpConverter extends MethodTransformer {
                         break;
                     }
                 }
+
                 // update target
                 jumpInsnNode.label = label;
                 // if possible, replace jump with target instruction
@@ -44,6 +43,8 @@ public class MethodOptimizeJumpConverter extends MethodTransformer {
                 }
             }
         }
+
+        // 其次，调用父类的方法实现
         super.transform(mn);
     }
 }

@@ -10,41 +10,31 @@ import org.objectweb.asm.tree.analysis.Value;
 
 public class MockAnalyzer<V extends Value> implements Opcodes {
     private final Interpreter<V> interpreter;
-    private InsnList insnList;
-    private int insnListSize;
-    private Frame<V>[] frames;
 
-    private boolean[] inInstructionsToProcess;
-    private int[] instructionsToProcess;
-    private int numInstructionsToProcess;
-
-    public MockAnalyzer(final Interpreter<V> interpreter) {
+    public MockAnalyzer(Interpreter<V> interpreter) {
         this.interpreter = interpreter;
     }
 
     @SuppressWarnings("unchecked")
-    public Frame<V>[] analyze(final String owner, final MethodNode method) throws AnalyzerException {
+    public Frame<V>[] analyze(String owner, MethodNode method) throws AnalyzerException {
         if ((method.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
-            frames = (Frame<V>[]) new Frame<?>[0];
-            return frames;
+            return (Frame<V>[]) new Frame<?>[0];
         }
 
-        insnList = method.instructions;
-        insnListSize = insnList.size();
-        frames = (Frame<V>[]) new Frame<?>[insnListSize];
-        inInstructionsToProcess = new boolean[insnListSize];
-        instructionsToProcess = new int[insnListSize];
-        numInstructionsToProcess = 0;
+        InsnList insnList = method.instructions;
+        int size = insnList.size();
+        Frame<V>[] frames = (Frame<V>[]) new Frame<?>[size];
+        boolean[] instructionsToProcess = new boolean[size];
 
         // Initializes the data structures for the control flow analysis.
         Frame<V> currentFrame = computeInitialFrame(owner, method);
-        merge(0, currentFrame);
+        merge(frames, 0, currentFrame, instructionsToProcess);
 
-        while (numInstructionsToProcess > 0) {
+        while (getCount(instructionsToProcess) > 0) {
             // Get and remove one instruction from the list of instructions to process.
-            int insnIndex = instructionsToProcess[--numInstructionsToProcess];
+            int insnIndex = getFirst(instructionsToProcess);
             Frame<V> oldFrame = frames[insnIndex];
-            inInstructionsToProcess[insnIndex] = false;
+            instructionsToProcess[insnIndex] = false;
 
             // Simulate the execution of this instruction.
             AbstractInsnNode insnNode = null;
@@ -56,7 +46,7 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
                 if (insnType == AbstractInsnNode.LABEL
                         || insnType == AbstractInsnNode.LINE
                         || insnType == AbstractInsnNode.FRAME) {
-                    merge(insnIndex + 1, oldFrame);
+                    merge(frames, insnIndex + 1, oldFrame, instructionsToProcess);
                 }
                 else {
                     currentFrame.init(oldFrame).execute(insnNode, interpreter);
@@ -65,25 +55,25 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
                         JumpInsnNode jumpInsn = (JumpInsnNode) insnNode;
                         // if之后的语句
                         if (insnOpcode != GOTO) {
-                            merge(insnIndex + 1, currentFrame);
+                            merge(frames, insnIndex + 1, currentFrame, instructionsToProcess);
                         }
 
                         // if和goto跳转之后的位置
                         int jumpInsnIndex = insnList.indexOf(jumpInsn.label);
-                        merge(jumpInsnIndex, currentFrame);
+                        merge(frames, jumpInsnIndex, currentFrame, instructionsToProcess);
                     }
                     else if (insnNode instanceof LookupSwitchInsnNode) {
                         LookupSwitchInsnNode lookupSwitchInsn = (LookupSwitchInsnNode) insnNode;
 
                         // lookupswitch的default情况
                         int targetInsnIndex = insnList.indexOf(lookupSwitchInsn.dflt);
-                        merge(targetInsnIndex, currentFrame);
+                        merge(frames, targetInsnIndex, currentFrame, instructionsToProcess);
 
                         // lookupswitch的各种case情况
                         for (int i = 0; i < lookupSwitchInsn.labels.size(); ++i) {
                             LabelNode label = lookupSwitchInsn.labels.get(i);
                             targetInsnIndex = insnList.indexOf(label);
-                            merge(targetInsnIndex, currentFrame);
+                            merge(frames, targetInsnIndex, currentFrame, instructionsToProcess);
                         }
                     }
                     else if (insnNode instanceof TableSwitchInsnNode) {
@@ -91,17 +81,17 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
 
                         // tableswitch的default情况
                         int targetInsnIndex = insnList.indexOf(tableSwitchInsn.dflt);
-                        merge(targetInsnIndex, currentFrame);
+                        merge(frames, targetInsnIndex, currentFrame, instructionsToProcess);
 
                         // tableswitch的各种case情况
                         for (int i = 0; i < tableSwitchInsn.labels.size(); ++i) {
                             LabelNode label = tableSwitchInsn.labels.get(i);
                             targetInsnIndex = insnList.indexOf(label);
-                            merge(targetInsnIndex, currentFrame);
+                            merge(frames, targetInsnIndex, currentFrame, instructionsToProcess);
                         }
                     }
                     else if (insnOpcode != ATHROW && (insnOpcode < IRETURN || insnOpcode > RETURN)) {
-                        merge(insnIndex + 1, currentFrame);
+                        merge(frames, insnIndex + 1, currentFrame, instructionsToProcess);
                     }
                 }
             }
@@ -115,6 +105,27 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
         }
 
         return frames;
+    }
+
+    private int getCount(boolean[] array) {
+        int count = 0;
+        for (boolean flag : array) {
+            if (flag) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private int getFirst(boolean[] array) {
+        int length = array.length;
+        for (int i = 0; i < length; i++) {
+            boolean flag = array[i];
+            if (flag) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private Frame<V> computeInitialFrame(final String owner, final MethodNode method) {
@@ -147,7 +158,7 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
         return frame;
     }
 
-    private void merge(final int insnIndex, final Frame<V> frame) throws AnalyzerException {
+    private void merge(Frame<V>[] frames, int insnIndex, Frame<V> frame, boolean[] instructionsToProcess) throws AnalyzerException {
         boolean changed;
         Frame<V> oldFrame = frames[insnIndex];
         if (oldFrame == null) {
@@ -158,9 +169,8 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
             changed = oldFrame.merge(frame, interpreter);
         }
 
-        if (changed && !inInstructionsToProcess[insnIndex]) {
-            inInstructionsToProcess[insnIndex] = true;
-            instructionsToProcess[numInstructionsToProcess++] = insnIndex;
+        if (changed && !instructionsToProcess[insnIndex]) {
+            instructionsToProcess[insnIndex] = true;
         }
     }
 }
