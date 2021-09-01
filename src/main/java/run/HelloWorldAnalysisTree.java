@@ -29,22 +29,11 @@ public class HelloWorldAnalysisTree {
 
         //（3）进行分析
         List<MethodNode> methods = cn.methods;
-        NullDereferenceAnalyzer analyzer = new NullDereferenceAnalyzer();
+        CyclomaticComplexity cc = new CyclomaticComplexity();
         for (MethodNode mn : methods) {
-            List<AbstractInsnNode> insnList = analyzer.findNullDereferences(cn.name, mn);
-            if (insnList != null && insnList.size() > 0) {
-                String line = String.format("Method: %s:%s", mn.name, mn.desc);
-                System.out.println(line);
-                for (AbstractInsnNode insnNode : insnList) {
-                    if (insnNode instanceof MethodInsnNode) {
-                        MethodInsnNode node = (MethodInsnNode) insnNode;
-                        String item = String.format("    %s.%s:%s", node.owner, node.name, node.desc);
-                        System.out.println(item);
-                    }
-                }
-                System.out.println("=================================");
-            }
-
+            int complexity = cc.getCyclomaticComplexity(cn.name, mn);
+            String line = String.format("%s:%s%n    complexity: %d", mn.name, mn.desc, complexity);
+            System.out.println(line);
         }
     }
 }
