@@ -11,6 +11,7 @@ import java.util.*;
 import static org.objectweb.asm.Opcodes.*;
 
 public class InstructionGraph {
+    private static final String DIVISION_LINE = "================================================================";
     private static final int START_X = 10;
     private static final int START_Y = 10;
 
@@ -220,22 +221,23 @@ public class InstructionGraph {
                 System.out.println("--->" + nextBlock);
             }
             for (InstructionBlock nextBlock : block.jumpBlockList) {
-                System.out.println("--->>" + nextBlock);
+                System.out.println("-+->" + nextBlock);
             }
-            System.out.println("=======================================================");
+            System.out.println(DIVISION_LINE);
         }
-        System.out.println();
     }
 
     private void printLabelsInBlock() {
-        System.out.println("labels in blocks:");
         Set<Map.Entry<LabelNode, InstructionBlock>> entries = labelInBlockMap.entrySet();
+        if (entries.size() < 1) return;
+
+        System.out.println("labels in blocks:");
         for (Map.Entry<LabelNode, InstructionBlock> entry : entries) {
             LabelNode key = entry.getKey();
             InstructionBlock value = entry.getValue();
             System.out.println(getLabelName(key) + ": " + value);
         }
-        System.out.println();
+        System.out.println(DIVISION_LINE);
     }
 
     public void draw() {
@@ -261,6 +263,7 @@ public class InstructionGraph {
             block.draw(currentX, currentY);
             System.out.println("currentX = " + currentX + ", currentY = " + currentY);
         }
+        System.out.println(DIVISION_LINE);
     }
 
     private void drawConnectionLines() {
@@ -316,12 +319,19 @@ public class InstructionGraph {
         int x6 = x4;
         int y6 = y5;
         drawLine(x5, y5, x6, y6);
-        drawLine(x6 - ARROW_LENGTH, y6 - ARROW_LENGTH, x6, y6);
-        drawLine(x6 + ARROW_LENGTH, y6 - ARROW_LENGTH, x6, y6);
+
         drawLine(x5, y5, x5 + ARROW_LENGTH, y5 - ARROW_LENGTH);
         drawLine(x5, y5, x5 + ARROW_LENGTH, y5 + ARROW_LENGTH);
 
         drawLine(x4, y4, x6, y6);
+        if (y4 < y6) {
+            drawLine(x6 - ARROW_LENGTH, y6 - ARROW_LENGTH, x6, y6);
+            drawLine(x6 + ARROW_LENGTH, y6 - ARROW_LENGTH, x6, y6);
+        }
+        else {
+            drawLine(x6 - ARROW_LENGTH, y6 + ARROW_LENGTH, x6, y6);
+            drawLine(x6 + ARROW_LENGTH, y6 + ARROW_LENGTH, x6, y6);
+        }
     }
 
     private void addPreJump(LabelNode labelNode) {

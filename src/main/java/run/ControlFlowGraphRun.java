@@ -1,5 +1,6 @@
 package run;
 
+import lsieun.asm.analysis.CyclomaticComplexity;
 import lsieun.asm.analysis.graph.InstructionGraph;
 import lsieun.utils.FileUtils;
 import org.objectweb.asm.ClassReader;
@@ -7,7 +8,7 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 public class ControlFlowGraphRun {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String relative_path = "sample/HelloWorld.class";
         String filepath = FileUtils.getFilePath(relative_path);
         byte[] bytes = FileUtils.readBytes(filepath);
@@ -33,13 +34,20 @@ public class ControlFlowGraphRun {
                 break;
             }
         }
+        if (targetNode == null) {
+            throw new RuntimeException("Can not find method: " + methodName);
+        }
 
         //（4）图形显示
-        if (targetNode != null) {
-            InstructionGraph graph = new InstructionGraph();
-            graph.init(targetNode);
-            graph.print();
-            graph.draw();
-        }
+        InstructionGraph graph = new InstructionGraph();
+        graph.init(targetNode);
+        graph.print();
+        graph.draw();
+
+        //（5）打印复杂度
+        CyclomaticComplexity cc = new CyclomaticComplexity();
+        int complexity = cc.getCyclomaticComplexity(cn.name, targetNode);
+        String line = String.format("%s:%s complexity: %d", targetNode.name, targetNode.desc, complexity);
+        System.out.println(line);
     }
 }

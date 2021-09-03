@@ -19,6 +19,7 @@ public class HelloWorldGenerateTree {
     }
 
     public static byte[] dump() throws Exception {
+        // (1) 使用ClassNode类收集数据
         ClassNode cn = new ClassNode();
         cn.version = V1_8;
         cn.access = ACC_PUBLIC | ACC_SUPER;
@@ -53,6 +54,7 @@ public class HelloWorldGenerateTree {
             mn2.maxLocals = 1;
         }
 
+        // (2) 使用ClassWriter类生成字节码
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         cn.accept(cw);
         return cw.toByteArray();
