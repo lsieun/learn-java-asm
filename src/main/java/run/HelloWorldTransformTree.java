@@ -13,9 +13,6 @@ public class HelloWorldTransformTree {
         String relative_path = "sample/HelloWorld.class";
         String filepath = FileUtils.getFilePath(relative_path);
         byte[] bytes1 = FileUtils.readBytes(filepath);
-        if (bytes1 == null) {
-            throw new RuntimeException("bytes1 is null");
-        }
 
         // (1)构建ClassReader
         ClassReader cr = new ClassReader(bytes1);

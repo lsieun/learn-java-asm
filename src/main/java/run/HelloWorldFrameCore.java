@@ -11,9 +11,6 @@ public class HelloWorldFrameCore {
         String relative_path = "sample/HelloWorld.class";
         String filepath = FileUtils.getFilePath(relative_path);
         byte[] bytes = FileUtils.readBytes(filepath);
-        if (bytes == null) {
-            throw new RuntimeException("bytes is null");
-        }
 
         //（1）构建ClassReader
         ClassReader cr = new ClassReader(bytes);

@@ -14,7 +14,6 @@ public class HelloWorldFrameTree {
         String relative_path = "sample/HelloWorld.class";
         String filepath = FileUtils.getFilePath(relative_path);
         byte[] bytes = FileUtils.readBytes(filepath);
-        if (bytes == null) return;
 
         // (1)构建ClassReader
         ClassReader cr = new ClassReader(bytes);
@@ -24,6 +23,7 @@ public class HelloWorldFrameTree {
         ClassNode cn = new ClassNode(api);
         cr.accept(cn, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
 
+        // (3) 查看方法Frame
         String owner = cn.name;
         List<MethodNode> methods = cn.methods;
         for (MethodNode mn : methods) {

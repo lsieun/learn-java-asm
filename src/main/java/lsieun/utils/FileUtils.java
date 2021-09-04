@@ -32,12 +32,15 @@ public class FileUtils {
             IOUtils.copy(in, bao);
 
             return bao.toByteArray();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             IOUtils.closeQuietly(in);
         }
-        return null;
+
+        throw new RuntimeException("Can not read file: " + filepath);
     }
 
     public static void writeBytes(String filepath, byte[] bytes) {
@@ -46,10 +49,11 @@ public class FileUtils {
         mkdirs(dirFile);
 
         try (OutputStream out = new FileOutputStream(filepath);
-             BufferedOutputStream buff = new BufferedOutputStream(out);) {
+             BufferedOutputStream buff = new BufferedOutputStream(out)) {
             buff.write(bytes);
             buff.flush();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println("file://" + filepath);
@@ -80,9 +84,11 @@ public class FileUtils {
                 list.add(line);
             }
             return list;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             IOUtils.closeQuietly(bufferReader);
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(in);
@@ -111,9 +117,11 @@ public class FileUtils {
                 bufferedWriter.write(line);
                 bufferedWriter.newLine();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        finally {
             IOUtils.closeQuietly(bufferedWriter);
             IOUtils.closeQuietly(writer);
             IOUtils.closeQuietly(out);
@@ -193,9 +201,11 @@ public class FileUtils {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             IOUtils.copy(in, out);
             return out.toByteArray();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             if (close) {
                 IOUtils.closeQuietly(in);
             }
