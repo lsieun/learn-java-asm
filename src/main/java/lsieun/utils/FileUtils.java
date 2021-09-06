@@ -1,5 +1,7 @@
 package lsieun.utils;
 
+import lsieun.cst.Const;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -56,7 +58,8 @@ public class FileUtils {
         catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("file://" + filepath);
+
+        if (Const.DEBUG) System.out.println("file://" + filepath);
     }
 
     public static List<String> readLines(String filepath) {
@@ -93,6 +96,8 @@ public class FileUtils {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(in);
         }
+
+        assert !Const.DEBUG : "bytes is null";
 
         return null;
     }
@@ -141,9 +146,7 @@ public class FileUtils {
 
         if (!file_exists) {
             boolean flag = dirFile.mkdirs();
-            if (!flag) {
-                throw new RuntimeException("Create Directory Failed: " + dirFile.getAbsolutePath());
-            }
+            assert !Const.DEBUG || flag : "Create Directory Failed: " + dirFile.getAbsolutePath();
         }
     }
 
@@ -172,9 +175,7 @@ public class FileUtils {
 
         if (file.isFile()) {
             boolean flag = file.delete();
-            if (!flag) {
-                System.out.println("[Warning] delete file failed: " + file.getAbsolutePath());
-            }
+            assert !Const.DEBUG || flag : "[Warning] delete file failed: " + file.getAbsolutePath();
         }
 
         if (file.isDirectory()) {
@@ -186,9 +187,7 @@ public class FileUtils {
             }
 
             boolean flag = file.delete();
-            if (!flag) {
-                System.out.println("[Warning] delete directory failed: " + file.getAbsolutePath());
-            }
+            assert !Const.DEBUG || flag : "[Warning] delete file failed: " + file.getAbsolutePath();
         }
     }
 

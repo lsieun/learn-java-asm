@@ -2,7 +2,7 @@ package lsieun.asm.tree.transformer;
 
 import org.objectweb.asm.tree.MethodNode;
 
-public class MethodTransformer {
+public abstract class MethodTransformer {
     protected MethodTransformer mt;
 
     public MethodTransformer(MethodTransformer mt) {

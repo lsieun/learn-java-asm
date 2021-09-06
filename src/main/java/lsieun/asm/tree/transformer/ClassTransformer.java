@@ -2,7 +2,7 @@ package lsieun.asm.tree.transformer;
 
 import org.objectweb.asm.tree.ClassNode;
 
-public class ClassTransformer {
+public abstract class ClassTransformer {
     protected ClassTransformer ct;
 
     public ClassTransformer(ClassTransformer ct) {
