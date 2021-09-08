@@ -13,9 +13,11 @@ import java.io.PrintWriter;
  * Print Lambda anonymous inner class.
  *
  * @see ASMPrint
- * @see TreePrinterRun
+ * @see PrintASMCodeCore
+ * @see PrintASMCodeTree
+ * @see PrintASMTextClass
  */
-public class LambdaRun {
+public class PrintASMTextLambda {
     public static void main(String[] args) throws IOException {
         // (1) 设置参数
         String str = "[-54, -2, -70, -66, ...]";

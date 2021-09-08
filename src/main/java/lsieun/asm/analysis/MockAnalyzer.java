@@ -17,38 +17,48 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
 
     @SuppressWarnings("unchecked")
     public Frame<V>[] analyze(String owner, MethodNode method) throws AnalyzerException {
+        // 第一步，如果是abstract或native方法，则直接返回。
         if ((method.access & (ACC_ABSTRACT | ACC_NATIVE)) != 0) {
             return (Frame<V>[]) new Frame<?>[0];
         }
 
+        // 第二步，定义局部变量
+        // （1）数据输入：获取指令集
         InsnList insnList = method.instructions;
         int size = insnList.size();
-        Frame<V>[] frames = (Frame<V>[]) new Frame<?>[size];
+
+        // （2）中间状态：记录需要哪一个指令需要处理
         boolean[] instructionsToProcess = new boolean[size];
 
-        // Initializes the data structures for the control flow analysis.
+        // （3）数据输出：最终的返回结果
+        Frame<V>[] frames = (Frame<V>[]) new Frame<?>[size];
+
+        // 第三步，开始计算
+        // （1）开始计算：根据方法的参数，计算方法的初始Frame
         Frame<V> currentFrame = computeInitialFrame(owner, method);
         merge(frames, 0, currentFrame, instructionsToProcess);
 
+        // （2）开始计算：根据方法的每一条指令，计算相应的Frame
         while (getCount(instructionsToProcess) > 0) {
-            // Get and remove one instruction from the list of instructions to process.
+            // 获取需要处理的指令索引（insnIndex）和旧的Frame（oldFrame）
             int insnIndex = getFirst(instructionsToProcess);
             Frame<V> oldFrame = frames[insnIndex];
             instructionsToProcess[insnIndex] = false;
 
-            // Simulate the execution of this instruction.
-            AbstractInsnNode insnNode = null;
+            // 模拟每一条指令的执行
             try {
-                insnNode = method.instructions.get(insnIndex);
+                AbstractInsnNode insnNode = method.instructions.get(insnIndex);
                 int insnOpcode = insnNode.getOpcode();
                 int insnType = insnNode.getType();
 
+                // 这三者并不是真正的指令，分别表示Label、LineNumberTable和Frame
                 if (insnType == AbstractInsnNode.LABEL
                         || insnType == AbstractInsnNode.LINE
                         || insnType == AbstractInsnNode.FRAME) {
                     merge(frames, insnIndex + 1, oldFrame, instructionsToProcess);
                 }
                 else {
+                    // 这里是真正的指令
                     currentFrame.init(oldFrame).execute(insnNode, interpreter);
 
                     if (insnNode instanceof JumpInsnNode) {
@@ -98,10 +108,6 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
             catch (AnalyzerException e) {
                 throw new AnalyzerException(e.node, "Error at instruction " + insnIndex + ": " + e.getMessage(), e);
             }
-            catch (RuntimeException e) {
-                // DontCheck(IllegalCatch): can't be fixed, for backward compatibility.
-                throw new AnalyzerException(insnNode, "Error at instruction " + insnIndex + ": " + e.getMessage(), e);
-            }
         }
 
         return frames;
@@ -131,6 +137,8 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
     private Frame<V> computeInitialFrame(final String owner, final MethodNode method) {
         Frame<V> frame = new Frame<>(method.maxLocals, method.maxStack);
         int currentLocal = 0;
+
+        // 第一步，判断是否需要存储this变量
         boolean isInstanceMethod = (method.access & ACC_STATIC) == 0;
         if (isInstanceMethod) {
             Type ownerType = Type.getObjectType(owner);
@@ -139,6 +147,7 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
             currentLocal++;
         }
 
+        // 第二步，将方法的参数存入到local variable内
         Type[] argumentTypes = Type.getArgumentTypes(method.desc);
         for (Type argumentType : argumentTypes) {
             V value = interpreter.newParameterValue(isInstanceMethod, currentLocal, argumentType);
@@ -150,23 +159,35 @@ public class MockAnalyzer<V extends Value> implements Opcodes {
             }
         }
 
+        // 第三步，将local variable的剩余位置填补上空值
         while (currentLocal < method.maxLocals) {
             frame.setLocal(currentLocal, interpreter.newEmptyValue(currentLocal));
             currentLocal++;
         }
+
+        // 第四步，设置返回值类型
         frame.setReturn(interpreter.newReturnTypeValue(Type.getReturnType(method.desc)));
         return frame;
     }
 
-    private void merge(Frame<V>[] frames, int insnIndex, Frame<V> frame, boolean[] instructionsToProcess) throws AnalyzerException {
+    /**
+     * Merge old frame with new frame.
+     *
+     * @param frames 所有的frame信息。
+     * @param insnIndex 当前指令的索引。
+     * @param newFrame 新的frame
+     * @param instructionsToProcess 记录哪一条指令需要处理
+     * @throws AnalyzerException 分析错误，抛出此异常
+     */
+    private void merge(Frame<V>[] frames, int insnIndex, Frame<V> newFrame, boolean[] instructionsToProcess) throws AnalyzerException {
         boolean changed;
         Frame<V> oldFrame = frames[insnIndex];
         if (oldFrame == null) {
-            frames[insnIndex] = new Frame<>(frame);
+            frames[insnIndex] = new Frame<>(newFrame);
             changed = true;
         }
         else {
-            changed = oldFrame.merge(frame, interpreter);
+            changed = oldFrame.merge(newFrame, interpreter);
         }
 
         if (changed && !instructionsToProcess[insnIndex]) {

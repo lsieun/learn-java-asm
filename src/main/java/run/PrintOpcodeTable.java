@@ -5,7 +5,7 @@ import lsieun.utils.OpcodeConst;
 /**
  * Print opcode between {@link #start} and {@link #stop}.
  */
-public class OpcodeRun {
+public class PrintOpcodeTable {
     private static int start = 0;
     private static int stop = 256;
 
