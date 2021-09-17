@@ -44,6 +44,7 @@ public class RemoveUnusedCastVisitor extends ClassVisitor {
 
         @Override
         public void visitTypeInsn(int opcode, String type) {
+            // 首先，处理自己的代码逻辑
             if (opcode == CHECKCAST) {
                 Class<?> to = getClass(type);
                 if (aa.stack != null && aa.stack.size() > 0) {
@@ -56,6 +57,8 @@ public class RemoveUnusedCastVisitor extends ClassVisitor {
                     }
                 }
             }
+
+            // 其次，调用父类的方法实现
             super.visitTypeInsn(opcode, type);
         }
 

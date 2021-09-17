@@ -3,10 +3,7 @@ package lsieun.asm.analysis.graph;
 import lsieun.graphics.Rectangle;
 import lsieun.graphics.Text;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class InstructionBlock {
+public class InsnBox {
     private static final int INNER_PADDING = 10;
     private static final int RECTANGLE_WIDTH = 250;
 
@@ -14,21 +11,13 @@ public class InstructionBlock {
     public int x;
     public int y;
 
-    // 文字信息
-    public List<String> lines;
-
     // 图形信息
-    public Rectangle box;
+    public Rectangle rectangle;
 
-    // 关联关系
-    public final List<InstructionBlock> nextBlockList = new ArrayList<>();
-    public final List<InstructionBlock> jumpBlockList = new ArrayList<>();
+    public final InsnBlock block;
 
-    public InstructionBlock() {
-    }
-
-    public void setLines(List<String> lines) {
-        this.lines = lines;
+    public InsnBox(InsnBlock block) {
+        this.block = block;
     }
 
     public void draw(int x, int y) {
@@ -40,7 +29,7 @@ public class InstructionBlock {
 
         int currentWidth = 0;
         int currentHeight = 0;
-        for (String item : lines) {
+        for (String item : block.lines) {
             Text text = new Text(currentX, currentY, item);
             text.draw();
 
@@ -55,13 +44,13 @@ public class InstructionBlock {
 //        int width = Math.max(RECTANGLE_WIDTH, currentWidth);
         int width = RECTANGLE_WIDTH;
         int height = currentHeight + INNER_PADDING;
-        box = new Rectangle(x, y, width, height);
-        box.draw();
+        rectangle = new Rectangle(x, y, width, height);
+        rectangle.draw();
     }
 
     public int getWidth() {
-        if (box != null) {
-            return box.getWidth();
+        if (rectangle != null) {
+            return rectangle.getWidth();
         }
         else {
             return 0;
@@ -69,8 +58,8 @@ public class InstructionBlock {
     }
 
     public int getHeight() {
-        if (box != null) {
-            return box.getHeight();
+        if (rectangle != null) {
+            return rectangle.getHeight();
         }
         else {
             return 0;

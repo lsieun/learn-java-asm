@@ -57,12 +57,14 @@ public class RemoveDeadCodeVisitor extends ClassVisitor {
             catch (AnalyzerException ex) {
                 ex.printStackTrace();
             }
-            if (next != null) {
-                mn.accept(next);
-            }
 
             // 其次，调用父类的方法实现
             super.visitEnd();
+
+            // 最后，向后续MethodVisitor传递
+            if (next != null) {
+                mn.accept(next);
+            }
         }
     }
 }

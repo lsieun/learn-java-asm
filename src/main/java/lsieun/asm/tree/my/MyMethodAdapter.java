@@ -21,7 +21,7 @@ public class MyMethodAdapter extends MethodVisitor {
         // 其次，调用父类的方法实现（根据实际情况，选择保留，或删除）
         super.visitEnd();
 
-        // 最后，向后续ClassVisitor传递
+        // 最后，向后续MethodVisitor传递
         if (next != null) {
             mn.accept(next);
         }

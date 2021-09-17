@@ -21,7 +21,7 @@ public class NullDereferenceAnalyzer {
             AbstractInsnNode insn = insns[i];
             if (frames[i] != null) {
                 Value v = getTarget(insn, frames[i]);
-                if (v == IsNullInterpreter.NULL || v == IsNullInterpreter.MAYBENULL) {
+                if (v == IsNullInterpreter.NULL_VALUE || v == IsNullInterpreter.MAYBE_NULL_VALUE) {
                     result.add(insn);
                 }
             }

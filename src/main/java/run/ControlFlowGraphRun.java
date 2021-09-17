@@ -1,11 +1,17 @@
 package run;
 
+import lsieun.asm.analysis.ControlFlowEdgeAnalyzer;
+import lsieun.asm.analysis.ControlFlowEdgeAnalyzer2;
 import lsieun.asm.analysis.CyclomaticComplexity;
-import lsieun.asm.analysis.graph.InstructionGraph;
+import lsieun.asm.analysis.graph.InsnBlock;
+import lsieun.asm.analysis.ControlFlowGraphAnalyzer;
+import lsieun.asm.analysis.graph.InsnGraph;
 import lsieun.utils.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.analysis.BasicInterpreter;
+import org.objectweb.asm.tree.analysis.BasicValue;
 
 public class ControlFlowGraphRun {
     public static void main(String[] args) throws Exception {
@@ -35,13 +41,34 @@ public class ControlFlowGraphRun {
             throw new RuntimeException("Can not find method: " + methodName);
         }
 
-        //（4）图形显示
-        InstructionGraph graph = new InstructionGraph();
-        graph.init(targetNode);
-        graph.print();
+        //（4）进行分析
+        InsnBlock[] blocks;
+        int kind = 2;
+        switch (kind) {
+            case 1: {
+                ControlFlowEdgeAnalyzer<BasicValue> analyzer = new ControlFlowEdgeAnalyzer<>(new BasicInterpreter());
+                analyzer.analyze(cn.name, targetNode);
+                blocks = analyzer.getBlocks();
+                break;
+            }
+            case 2: {
+                ControlFlowEdgeAnalyzer<BasicValue> analyzer = new ControlFlowEdgeAnalyzer2<>(new BasicInterpreter());
+                analyzer.analyze(cn.name, targetNode);
+                blocks = analyzer.getBlocks();
+                break;
+            }
+            default: {
+                ControlFlowGraphAnalyzer analyzer = new ControlFlowGraphAnalyzer();
+                analyzer.analyze(targetNode);
+                blocks = analyzer.getBlocks();
+            }
+        }
+
+        //（5）图形显示
+        InsnGraph graph = new InsnGraph(blocks);
         graph.draw();
 
-        //（5）打印复杂度
+        //（6）打印复杂度
         CyclomaticComplexity cc = new CyclomaticComplexity();
         int complexity = cc.getCyclomaticComplexity(cn.name, targetNode);
         String line = String.format("%s:%s complexity: %d", targetNode.name, targetNode.desc, complexity);
