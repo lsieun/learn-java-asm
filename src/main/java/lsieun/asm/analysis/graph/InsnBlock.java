@@ -16,11 +16,15 @@ public class InsnBlock {
     }
 
     public void addNext(InsnBlock item) {
-        nextBlockList.add(item);
+        if (!nextBlockList.contains(item)) {
+            nextBlockList.add(item);
+        }
     }
 
     public void addJump(InsnBlock item) {
-        jumpBlockList.add(item);
+        if (!jumpBlockList.contains(item)) {
+            jumpBlockList.add(item);
+        }
     }
 
 }

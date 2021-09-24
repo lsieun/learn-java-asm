@@ -20,6 +20,7 @@ public class InsnBox {
         this.block = block;
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public void draw(int x, int y) {
         this.x = x;
         this.y = y;

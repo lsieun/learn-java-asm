@@ -9,7 +9,6 @@ import java.util.Formatter;
 import java.util.List;
 
 public class InsnGraph {
-    private static final String DIVISION_LINE = "================================================================";
     private static final int START_X = 10;
     private static final int START_Y = 10;
 
@@ -54,6 +53,7 @@ public class InsnGraph {
         }
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private void drawBlockRectangles() {
         int currentX = this.startX;
         int currentY = this.startY;
@@ -81,8 +81,8 @@ public class InsnGraph {
             }
 
             List<InsnBox> jumpBoxList = findJumpBoxes(currentBox);
-            for (InsnBox jumpbox : jumpBoxList) {
-                jumpOne2Another(currentBox.rectangle, jumpbox.rectangle, i);
+            for (InsnBox jumpBox : jumpBoxList) {
+                jumpOne2Another(currentBox.rectangle, jumpBox.rectangle, i);
             }
         }
     }
@@ -125,6 +125,7 @@ public class InsnGraph {
         return jumpBoxList;
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private void connectTop2BottomBlock(Rectangle box1, Rectangle box2) {
         int x1 = box1.getX();
         int y1 = box1.getY();
@@ -142,6 +143,7 @@ public class InsnGraph {
         drawLine(x4 + ARROW_LENGTH, y4 - ARROW_LENGTH, x4, y4);
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private void jumpOne2Another(Rectangle box1, Rectangle box2, int index) {
         int x1 = box1.getX();
         int y1 = box1.getY();
@@ -196,7 +198,7 @@ public class InsnGraph {
             for (InsnBlock nextBlock : block.jumpBlockList) {
                 System.out.println("-+->" + nextBlock);
             }
-            System.out.println(DIVISION_LINE);
+            System.out.println(Const.DIVISION_LINE);
         }
     }
 
@@ -207,6 +209,6 @@ public class InsnGraph {
             fm.format("(%d,%d) - %s%n", box.x, box.y, box.block);
         }
         System.out.print(sb);
-        System.out.println(DIVISION_LINE);
+        System.out.println(Const.DIVISION_LINE);
     }
 }

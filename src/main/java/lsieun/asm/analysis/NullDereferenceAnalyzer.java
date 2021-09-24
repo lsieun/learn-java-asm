@@ -16,9 +16,9 @@ public class NullDereferenceAnalyzer {
         List<AbstractInsnNode> result = new ArrayList<>();
         Analyzer<BasicValue> analyzer = new Analyzer<>(new IsNullInterpreter(ASM9));
         Frame<BasicValue>[] frames = analyzer.analyze(owner, mn);
-        AbstractInsnNode[] insns = mn.instructions.toArray();
-        for (int i = 0; i < insns.length; i++) {
-            AbstractInsnNode insn = insns[i];
+        AbstractInsnNode[] insnNodes = mn.instructions.toArray();
+        for (int i = 0; i < insnNodes.length; i++) {
+            AbstractInsnNode insn = insnNodes[i];
             if (frames[i] != null) {
                 Value v = getTarget(insn, frames[i]);
                 if (v == IsNullInterpreter.NULL_VALUE || v == IsNullInterpreter.MAYBE_NULL_VALUE) {

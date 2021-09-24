@@ -1,10 +1,7 @@
 package run;
 
-import lsieun.asm.analysis.ControlFlowEdgeAnalyzer;
-import lsieun.asm.analysis.ControlFlowEdgeAnalyzer2;
-import lsieun.asm.analysis.CyclomaticComplexity;
+import lsieun.asm.analysis.*;
 import lsieun.asm.analysis.graph.InsnBlock;
-import lsieun.asm.analysis.ControlFlowGraphAnalyzer;
 import lsieun.asm.analysis.graph.InsnGraph;
 import lsieun.utils.FileUtils;
 import org.objectweb.asm.ClassReader;
@@ -12,6 +9,8 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.BasicValue;
+
+import java.util.List;
 
 public class ControlFlowGraphRun {
     public static void main(String[] args) throws Exception {
@@ -45,6 +44,17 @@ public class ControlFlowGraphRun {
         InsnBlock[] blocks;
         int kind = 2;
         switch (kind) {
+            case 0: {
+                InsnText insnText = new InsnText();
+                List<String> lines = insnText.toLines(targetNode.instructions.toArray());
+
+                InsnBlock block = new InsnBlock();
+                block.addLines(lines);
+
+                blocks = new InsnBlock[1];
+                blocks[0] = block;
+                break;
+            }
             case 1: {
                 ControlFlowEdgeAnalyzer<BasicValue> analyzer = new ControlFlowEdgeAnalyzer<>(new BasicInterpreter());
                 analyzer.analyze(cn.name, targetNode);
@@ -53,6 +63,12 @@ public class ControlFlowGraphRun {
             }
             case 2: {
                 ControlFlowEdgeAnalyzer<BasicValue> analyzer = new ControlFlowEdgeAnalyzer2<>(new BasicInterpreter());
+                analyzer.analyze(cn.name, targetNode);
+                blocks = analyzer.getBlocks();
+                break;
+            }
+            case 3: {
+                ControlFlowAnalyzer2 analyzer = new ControlFlowAnalyzer2();
                 analyzer.analyze(cn.name, targetNode);
                 blocks = analyzer.getBlocks();
                 break;

@@ -3,20 +3,20 @@ package lsieun.asm.analysis;
 import lsieun.asm.analysis.graph.InsnBlock;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.*;
+import org.objectweb.asm.tree.analysis.AnalyzerException;
 
 import java.util.List;
 
-public class ControlFlowEdgeAnalyzer<V extends Value> extends Analyzer<V> {
+public class ControlFlowAnalyzer2 extends ControlFlowAnalyzer{
     private AbstractInsnNode[] nodeArray;
     public InsnBlock[] blocks;
 
-    public ControlFlowEdgeAnalyzer(Interpreter<V> interpreter) {
-        super(interpreter);
+    public ControlFlowAnalyzer2() {
+
     }
 
     @Override
-    public Frame<V>[] analyze(String owner, MethodNode method) throws AnalyzerException {
+    public void analyze(String owner, MethodNode method) throws AnalyzerException {
         nodeArray = method.instructions.toArray();
         int length = nodeArray.length;
         blocks = new InsnBlock[length];
@@ -28,7 +28,7 @@ public class ControlFlowEdgeAnalyzer<V extends Value> extends Analyzer<V> {
             blocks[i].addLines(lines);
         }
 
-        return super.analyze(owner, method);
+        super.analyze(owner, method);
     }
 
     @Override
@@ -97,5 +97,4 @@ public class ControlFlowEdgeAnalyzer<V extends Value> extends Analyzer<V> {
     public InsnBlock[] getBlocks() {
         return blocks;
     }
-
 }

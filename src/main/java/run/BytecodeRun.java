@@ -1,6 +1,7 @@
 package run;
 
 import lsieun.classfile.InsnRaw;
+import lsieun.cst.Const;
 import lsieun.utils.HexUtils;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class BytecodeRun {
             sb.append(array[1]);
         }
         String bytecodeHexStr = sb.toString().replaceAll("\\s", "");
-        System.out.println("==================================================");
+        System.out.println(Const.DIVISION_LINE);
 
         // (3) 打印instruction信息
         byte[] bytes = HexUtils.parse(bytecodeHexStr);

@@ -1,6 +1,7 @@
 package run;
 
 import lsieun.asm.analysis.MockAnalyzer;
+import lsieun.cst.Const;
 import lsieun.utils.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -35,7 +36,7 @@ public class MockAnalyzerRun {
             for (Frame<?> f : frames) {
                 System.out.println(f);
             }
-            System.out.println("=======================================");
+            System.out.println(Const.DIVISION_LINE);
         }
     }
 }
