@@ -9,6 +9,8 @@
 
 :bug: Java [ASM](https://asm.ow2.io/) is an open-source java library for manipulating bytecode.
 
+如果您觉得代码还不错（:sparkling_heart:），欢迎加星（:star:）关注！希望我们这个项目早日加入[Gitee Most Valuable Project](https://gitee.com/gvp)计划！
+
 ---
 
 ## 1. 如何使用
@@ -43,11 +45,17 @@ git clone https://github.com/lsieun/learn-java-asm
 - [Apache Maven](https://maven.apache.org/)
 - [IntelliJ IDEA](https://www.jetbrains.com/idea/download/other.html) (Ultimate or Community Edition)
 
+在`learn-java-asm`项目当中，使用的ASM版本为`9.0`。如果想使用最新![Maven Central](https://img.shields.io/maven-central/v/org.ow2.asm/asm.svg?color=25a162&label=ASM) 版本，可以修改`pom.xml`文件中的`asm.version`属性：
+
+```text
+<asm.version>9.0</asm.version>
+```
+
 ### 1.3. 运行代码
 
 在`learn-java-asm`项目当中，包含`main`方法的类主要位于`run`包（`src/main/java/run`）。
 
-## 2. 相关资源
+## 2. 课程资料
 
 [![51cto](https://img.shields.io/website/https/edu.51cto.com.svg?label=51cto)](https://edu.51cto.com/lecturer/9210464.html)
 [![Bilibili](https://img.shields.io/website/https/bilibili.com.svg?label=bilibili&style=flat-square&logo=bilibili&logoColor=00A1D6)](https://space.bilibili.com/1321054247)

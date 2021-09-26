@@ -1,15 +1,15 @@
-package lsieun.asm.analysis;
+package lsieun.asm.analysis.nullability;
 
 import jdk.internal.org.objectweb.asm.Opcodes;
-import lsieun.asm.analysis.state.LocalStackStateFrame;
 import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.analysis.BasicValue;
+import org.objectweb.asm.tree.analysis.Frame;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class NullabilityFrame extends LocalStackStateFrame<BasicValue> {
+import static lsieun.asm.analysis.nullability.NullabilityValue.*;
+
+public class NullabilityFrame extends Frame<NullabilityValue> {
     private static final String START = "{";
     private static final String STOP = "}";
     private static final String EMPTY = "{}";
@@ -26,23 +26,24 @@ public class NullabilityFrame extends LocalStackStateFrame<BasicValue> {
     @Override
     public void initJumpTarget(int opcode, LabelNode target) {
         // 首先，处理自己的代码逻辑
-        int index = getStackTopIndex() + 1;
+        int stackIndex = getStackSize();
+        NullabilityValue oldValue = getStack(stackIndex);
         switch (opcode) {
             case Opcodes.IFNULL: {
                 if (target == null) {
-                    updateFrame(index, NullabilityInterpreter.NOT_NULL_VALUE);
+                    updateFrame(oldValue, NOT_NULL_VALUE);
                 }
                 else {
-                    updateFrame(index, NullabilityInterpreter.NULL_VALUE);
+                    updateFrame(oldValue, NULL_VALUE);
                 }
                 break;
             }
             case Opcodes.IFNONNULL: {
                 if (target == null) {
-                    updateFrame(index, NullabilityInterpreter.NULL_VALUE);
+                    updateFrame(oldValue, NULL_VALUE);
                 }
                 else {
-                    updateFrame(index, NullabilityInterpreter.NOT_NULL_VALUE);
+                    updateFrame(oldValue, NOT_NULL_VALUE);
                 }
                 break;
             }
@@ -52,61 +53,56 @@ public class NullabilityFrame extends LocalStackStateFrame<BasicValue> {
         super.initJumpTarget(opcode, target);
     }
 
-    private void updateFrame(int index, BasicValue value) {
-        int state = getLocalStackState(index);
-        if (state == NOT_EXISTED) {
-            state = index;
+    private void updateFrame(NullabilityValue oldValue, NullabilityValue newValue) {
+        int numLocals = getLocals();
+        for (int i = 0; i < numLocals; i++) {
+            NullabilityValue currentValue = getLocal(i);
+            if (oldValue == currentValue) {
+                setLocal(i, newValue);
+            }
         }
 
-        int length = getMaxLength();
-        int local = getLocals();
-        int[] localStackStates = getLocalStackStates();
-        for (int i = 0; i < length; i++) {
-            int currentState = localStackStates[i];
-            if ((i == state) || (state == currentState)) {
-                if (i < local) {
-                    setLocal(i, value);
-                }
-                else {
-                    setStack(i - local, value);
-                }
+        int numStack = getMaxStackSize();
+        for (int i = 0; i < numLocals; i++) {
+            NullabilityValue currentValue = getStack(i);
+            if (oldValue == currentValue) {
+                setStack(i, newValue);
             }
         }
     }
 
     @Override
     public String toString() {
-        List<BasicValue> localList = new ArrayList<>();
+        List<NullabilityValue> localList = new ArrayList<>();
         int maxLocals = getLocals();
         for (int i = 0; i < maxLocals; i++) {
             localList.add(getLocal(i));
         }
 
-        List<BasicValue> stackList = new ArrayList<>();
+        List<NullabilityValue> stackList = new ArrayList<>();
         int maxStack = getStackSize();
         for (int i = 0; i < maxStack; i++) {
             stackList.add(getStack(i));
         }
 
-        String state_str = Arrays.toString(getLocalStackStates());
         String locals_str = list2Str(localList);
         String stack_str = list2Str(stackList);
-        return String.format("%s: %s %s %s", state_str, locals_str, SEPARATOR, stack_str);
+        return String.format("%s %s %s", locals_str, SEPARATOR, stack_str);
     }
 
-    private String list2Str(List<BasicValue> list) {
+    private String list2Str(List<NullabilityValue> list) {
         if (list == null || list.size() == 0) return EMPTY;
         int size = list.size();
         String[] array = new String[size];
         for (int i = 0; i < size - 1; i++) {
-            BasicValue item = list.get(i);
+            NullabilityValue item = list.get(i);
             array[i] = item2Str(item);
         }
 
         {
             // 最后一个值
             int lastIndex = size - 1;
-            BasicValue item = list.get(lastIndex);
+            NullabilityValue item = list.get(lastIndex);
             array[lastIndex] = item2Str(item);
         }
 
@@ -127,26 +123,26 @@ public class NullabilityFrame extends LocalStackStateFrame<BasicValue> {
         return sb.toString();
     }
 
-    private String item2Str(BasicValue value) {
+    private String item2Str(NullabilityValue value) {
         if (value == null) {
             return "null";
         }
-        else if (value == BasicValue.UNINITIALIZED_VALUE) {
+        else if (value == UNINITIALIZED_VALUE) {
             return ".";
         }
-        else if (value == BasicValue.RETURNADDRESS_VALUE) {
+        else if (value == RETURN_ADDRESS_VALUE) {
             return "A";
         }
-        else if (value == NullabilityInterpreter.UNKNOWN_VALUE) {
+        else if (value == UNKNOWN_VALUE) {
             return "unknown";
         }
-        else if (value == NullabilityInterpreter.NULL_VALUE) {
+        else if (value == NULL_VALUE) {
             return "null";
         }
-        else if (value == NullabilityInterpreter.NOT_NULL_VALUE) {
+        else if (value == NOT_NULL_VALUE) {
             return "not-null";
         }
-        else if (value == NullabilityInterpreter.NULLABLE_VALUE) {
+        else if (value == NULLABLE_VALUE) {
             return "nullable";
         }
         else {
