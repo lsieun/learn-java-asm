@@ -187,28 +187,32 @@ public class InsnGraph {
     }
 
     private void printBlocks(InsnBlock[] blocks) {
+        StringBuilder sb = new StringBuilder();
+        Formatter fm = new Formatter(sb);
         for (InsnBlock block : blocks) {
-            System.out.println(block);
+            fm.format(Const.DEBUG_FORMAT, block);
             for (String item : block.lines) {
-                System.out.println("    " + item);
+                fm.format(Const.DEBUG_FORMAT, "    " + item);
             }
             for (InsnBlock nextBlock : block.nextBlockList) {
-                System.out.println("--->" + nextBlock);
+                fm.format(Const.DEBUG_FORMAT, "--->" + nextBlock);
             }
             for (InsnBlock nextBlock : block.jumpBlockList) {
-                System.out.println("-+->" + nextBlock);
+                fm.format(Const.DEBUG_FORMAT, "-+->" + nextBlock);
             }
-            System.out.println(Const.DIVISION_LINE);
+            fm.format(Const.DEBUG_FORMAT, Const.DIVISION_LINE);
         }
+        System.out.println(sb);
     }
 
     private void printBoxes() {
         StringBuilder sb = new StringBuilder();
         Formatter fm = new Formatter(sb);
         for (InsnBox box : boxes) {
-            fm.format("(%d,%d) - %s%n", box.x, box.y, box.block);
+            String msg = String.format("(%d,%d) - %s", box.x, box.y, box.block);
+            fm.format(Const.DEBUG_FORMAT, msg);
         }
+        fm.format(Const.DEBUG_FORMAT, Const.DIVISION_LINE);
         System.out.print(sb);
-        System.out.println(Const.DIVISION_LINE);
     }
 }

@@ -1,15 +1,24 @@
 # Learn Java ASM
 
+[![Gitee](https://img.shields.io/badge/Gitee-white.svg?style=flat-square&logo=gitee&logoColor=C71D23)](https://gitee.com/lsieun/learn-java-asm)
 ![license](https://badg.now.sh/gitee/license/lsieun/learn-java-asm)
-![stars](https://badg.now.sh/gitee/stars/lsieun/learn-java-asm)
-![forks](https://badg.now.sh/gitee/forks/lsieun/learn-java-asm)
-![issues](https://badg.now.sh/gitee/issues/lsieun/learn-java-asm)
-![commits](https://badg.now.sh/gitee/commits/lsieun/learn-java-asm)
-![last commit](https://badg.now.sh/gitee/last-commit/lsieun/learn-java-asm)
+![Gitee stars](https://badg.now.sh/gitee/stars/lsieun/learn-java-asm)
+![Gitee forks](https://badg.now.sh/gitee/forks/lsieun/learn-java-asm)
+![Gitee issues](https://badg.now.sh/gitee/issues/lsieun/learn-java-asm)
+![Gitee last commit](https://badg.now.sh/gitee/last-commit/lsieun/learn-java-asm)
 
-:bug: Java [ASM](https://asm.ow2.io/) is an open-source java library for manipulating bytecode.
+[![Github](https://img.shields.io/badge/GitHub-white.svg?style=flat-square&logo=github&logoColor=181717)](https://github.com/lsieun/learn-java-asm)
+![GitHub](https://img.shields.io/github/license/lsieun/learn-java-asm)
+![GitHub stars](https://img.shields.io/github/stars/lsieun/learn-java-asm.svg)
+![GitHub forks](https://img.shields.io/github/forks/lsieun/learn-java-asm.svg)
+![GitHub issues](https://img.shields.io/github/issues-raw/lsieun/learn-java-asm?label=issues)
+![GitHub last commit](https://img.shields.io/github/last-commit/lsieun/learn-java-asm.svg)
 
-如果您觉得代码还不错（:sparkling_heart:），欢迎加星（:star:）关注！希望我们这个项目早日加入[Gitee Most Valuable Project](https://gitee.com/gvp)计划！
+:maple_leaf: Java [ASM](https://asm.ow2.io/) is an open-source java library for manipulating bytecode.
+
+本项目旨在系统地介绍如何学习Java ASM的知识，主要涉及Core API、OPCODE和Tree API等内容。至于学习的预期目标就是，用一个形象的说法来讲，让字节码在你的手中“跳舞”：看看你的左手，一个完整的ClassFile拆解成不同粒度的字节码内容；看看你的右手，不同粒度的字节码内容又重新组织成一个ClassFile结构。
+
+如果你觉得代码还不错（ :sparkling_heart: ），欢迎加星（ :star: ）支持！
 
 ---
 
@@ -143,7 +152,7 @@ mvn clean compile
 [![QQ Group](https://img.shields.io/badge/584642776-white.svg?style=flat-square&logo=tencentqq&logoColor=1DA1F2&label=QQ%20Group)](https://lsieun.github.io/assets/images/contact/qq-group.jpg)
 [![Java字节码交流QQ群](https://pub.idqqimg.com/wpa/images/group.png)](https://jq.qq.com/?_wv=1027&k=yOBiOaJV)
 
-## 6. 参考资料
+## 6. License
 
-- [ObjectWeb ASM](https://asm.ow2.io/)
-- [Gitee badge](https://badg.vercel.app/)
+This project is licensed under the MIT License.
+See the [LICENSE](./LICENSE) file for the full license text.
