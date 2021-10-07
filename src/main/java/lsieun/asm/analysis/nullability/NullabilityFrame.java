@@ -1,6 +1,6 @@
 package lsieun.asm.analysis.nullability;
 
-import jdk.internal.org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.analysis.Frame;
 
@@ -63,7 +63,7 @@ public class NullabilityFrame extends Frame<NullabilityValue> {
         }
 
         int numStack = getMaxStackSize();
-        for (int i = 0; i < numLocals; i++) {
+        for (int i = 0; i < numStack; i++) {
             NullabilityValue currentValue = getStack(i);
             if (oldValue == currentValue) {
                 setStack(i, newValue);

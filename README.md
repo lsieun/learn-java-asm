@@ -73,13 +73,13 @@ git clone https://github.com/lsieun/learn-java-asm
 
 - 《Java ASM系列一：Core API》
   - 文章地址： [lsieun.cn](https://lsieun.cn/java/asm/java-asm-season-01.html) | [lsieun.github.io](https://lsieun.github.io/java/asm/java-asm-season-01.html) | [51CTO博客](https://blog.51cto.com/lsieun/2924583)
-  - 视频地址： [51CTO学堂](https://edu.51cto.com/course/28517.html) | [B站](https://space.bilibili.com/1321054247/channel/detail?cid=189917)
+  - 视频地址： [51CTO学堂](https://edu.51cto.com/course/28517.html) | [B站](https://space.bilibili.com/1321054247/channel/seriesdetail?sid=381716)
 - 《Java ASM系列二：OPCODE》
   - 文章地址：[lsieun.cn](https://lsieun.cn/java/asm/java-asm-season-02.html) | [lsieun.github.io](https://lsieun.github.io/java/asm/java-asm-season-02.html) | [51CTO博客](https://blog.51cto.com/lsieun/3273965)
-  - 视频地址：[51CTO学堂](https://edu.51cto.com/course/28870.html) | [B站](https://space.bilibili.com/1321054247/channel/detail?cid=197480)
+  - 视频地址：[51CTO学堂](https://edu.51cto.com/course/28870.html) | [B站](https://space.bilibili.com/1321054247/channel/seriesdetail?sid=381716)
 - 《Java ASM系列三：Tree API》
-  - 文章地址：未开始
-  - 视频地址：未开始
+  - 文章地址：[lsieun.cn](https://lsieun.cn/java/asm/java-asm-season-03.html) | [lsieun.github.io](https://lsieun.github.io/java/asm/java-asm-season-03.html) | [51CTO博客](https://blog.51cto.com/lsieun/4034588)
+  - 视频地址：[B站](https://space.bilibili.com/1321054247/channel/seriesdetail?sid=381716)
 
 ## 3. 注意事项
 
