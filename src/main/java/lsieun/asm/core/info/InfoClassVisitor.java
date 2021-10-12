@@ -1,9 +1,6 @@
 package lsieun.asm.core.info;
 
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +16,14 @@ public class InfoClassVisitor extends ClassVisitor {
         String line = String.format("ClassVisitor.visit(%d, %s, %s, %s, %s, %s);", version, getAccess(access), name, signature, superName, Arrays.toString(interfaces));
         System.out.println(line);
         super.visit(version, access, name, signature, superName, interfaces);
+    }
+
+    @Override
+    public void visitAttribute(Attribute attribute) {
+        String line = String.format("ClassVisitor.visitAttribute(%s);", attribute);
+        System.out.println(line);
+
+        super.visitAttribute(attribute);
     }
 
     @Override
