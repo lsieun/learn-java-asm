@@ -13,7 +13,7 @@ public final class ControlFlowBuilder {
         }
 
         int size = methodNode.instructions.size();
-        MyEdgeCreator edgeCreator = new MyEdgeCreator(size);
+        SimpleEdgeCreator edgeCreator = new SimpleEdgeCreator(size);
         FramelessAnalyzer myAnalyzer = new FramelessAnalyzer(edgeCreator);
         myAnalyzer.analyze(methodNode);
 

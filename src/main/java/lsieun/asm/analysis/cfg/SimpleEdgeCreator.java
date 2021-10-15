@@ -2,18 +2,17 @@ package lsieun.asm.analysis.cfg;
 
 import lsieun.trove.TIntArrayList;
 
-public class MyEdgeCreator implements EdgeCreator {
+public class SimpleEdgeCreator implements EdgeCreator {
     public final TIntArrayList[] transitions;
     public final TIntArrayList[] errorTransitions;
 
-    public MyEdgeCreator(int size) {
+    public SimpleEdgeCreator(int size) {
         this.transitions = new TIntArrayList[size];
         this.errorTransitions = new TIntArrayList[size];
         for (int i = 0; i < transitions.length; i++) {
             this.transitions[i] = new TIntArrayList();
             this.errorTransitions[i] = new TIntArrayList();
         }
-
     }
 
     @Override

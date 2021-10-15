@@ -1,6 +1,8 @@
 package run;
 
 import lsieun.asm.analysis.InsnText;
+import lsieun.asm.analysis.transition.DestinationInterpreter;
+import lsieun.utils.ValueUtils;
 import lsieun.cst.Const;
 import lsieun.utils.FileUtils;
 import lsieun.utils.FrameUtils;
@@ -32,11 +34,51 @@ public class HelloWorldFrameTree {
         String owner = cn.name;
         List<MethodNode> methods = cn.methods;
         for (MethodNode mn : methods) {
-            // NOTE: print方法重点是修改第3个和第4个参数
-            print(owner, mn, new BasicInterpreter(), null);
+            print(owner, mn, 7);
         }
     }
 
+    private static void print(String owner, MethodNode mn, int option) throws AnalyzerException {
+        InsnText insnText = new InsnText();
+
+        switch (option) {
+            case 1:
+                print(owner, mn, new BasicInterpreter(), null);
+                break;
+            case 2:
+                print(owner, mn, new BasicVerifier(), null);
+                break;
+            case 3:
+                print(owner, mn, new SimpleVerifier(), null);
+                break;
+            case 4:
+                print(owner, mn, new SimpleVerifier(), ValueUtils::fromBasicValue2String);
+                break;
+            case 5:
+                print(owner, mn, new SourceInterpreter(), null);
+                break;
+            case 6:
+                print(owner, mn, new SourceInterpreter(), sourceValue -> insnText.toLines(sourceValue.insns.toArray(new AbstractInsnNode[0])));
+                break;
+            case 7:
+                print(owner, mn, new SourceInterpreter(), sourceValue ->
+                        ValueUtils.fromSourceValue2Index(mn, sourceValue)
+                );
+                break;
+            case 8:
+                print(owner, mn, new DestinationInterpreter(), sourceValue -> insnText.toLines(sourceValue.insns.toArray(new AbstractInsnNode[0])));
+                break;
+            case 9:
+                print(owner, mn, new DestinationInterpreter(), sourceValue ->
+                        ValueUtils.fromSourceValue2Index(mn, sourceValue)
+                );
+                break;
+            default:
+                throw new IllegalArgumentException("option is not valid: " + option);
+        }
+    }
+
+    // NOTE: print方法重点是修改第3个和第4个参数
     public static <V extends Value, T> void print(String owner, MethodNode mn, Interpreter<V> interpreter, Function<V, T> func) throws AnalyzerException {
         System.out.println(mn.name + ":" + mn.desc);
 

@@ -20,6 +20,16 @@
 
 如果你觉得代码还不错（ :sparkling_heart: ），欢迎加星（ :star: ）支持！
 
+```text
+           _______                                 ,        _        _        
+          (,     /'                              /'/      /' `\     ' )     _)
+               /'                              /' /     /'   ._)    //  _/~/' 
+             /'____ .     ,   ____          ,/'  /     (____      /'/_/~ /'   
+   _       /'/'    )|    /  /'    )        /`--,/           )   /' /~  /'     
+ /' `    /'/'    /' |  /' /'    /'       /'    /          /'  /'     /'       
+(_____,/' (___,/(___|/(__(___,/(__   (,/'     (_,(_____,/'(,/'      (_,       
+```
+
 ---
 
 ## 1. 如何使用
@@ -72,14 +82,66 @@ git clone https://github.com/lsieun/learn-java-asm
 [![lsieun.github.io](https://img.shields.io/website/https/lsieun.github.io.svg?label=lsieun.github.io)](https://lsieun.github.io)
 
 - 《Java ASM系列一：Core API》
-  - 文章地址： [lsieun.cn](https://lsieun.cn/java/asm/java-asm-season-01.html) | [lsieun.github.io](https://lsieun.github.io/java/asm/java-asm-season-01.html) | [51CTO博客](https://blog.51cto.com/lsieun/2924583)
-  - 视频地址： [51CTO学堂](https://edu.51cto.com/course/28517.html) | [B站](https://space.bilibili.com/1321054247/channel/seriesdetail?sid=381716)
+  - 文章地址： [lsieun.cn](https://lsieun.cn/java/asm/java-asm-season-01.html) | [lsieun.github.io](https://lsieun.github.io/java/asm/java-asm-season-01.html) | [51CTO](https://blog.51cto.com/lsieun/2924583)
+  - 视频地址： [51CTO](https://edu.51cto.com/course/28517.html) | [Bilibili](https://space.bilibili.com/1321054247/channel/seriesdetail?sid=381716)
 - 《Java ASM系列二：OPCODE》
-  - 文章地址：[lsieun.cn](https://lsieun.cn/java/asm/java-asm-season-02.html) | [lsieun.github.io](https://lsieun.github.io/java/asm/java-asm-season-02.html) | [51CTO博客](https://blog.51cto.com/lsieun/3273965)
-  - 视频地址：[51CTO学堂](https://edu.51cto.com/course/28870.html) | [B站](https://space.bilibili.com/1321054247/channel/seriesdetail?sid=381716)
+  - 文章地址：[lsieun.cn](https://lsieun.cn/java/asm/java-asm-season-02.html) | [lsieun.github.io](https://lsieun.github.io/java/asm/java-asm-season-02.html) | [51CTO](https://blog.51cto.com/lsieun/3273965)
+  - 视频地址：[51CTO](https://edu.51cto.com/course/28870.html) | [Bilibili](https://space.bilibili.com/1321054247/channel/seriesdetail?sid=381716)
 - 《Java ASM系列三：Tree API》
-  - 文章地址：[lsieun.cn](https://lsieun.cn/java/asm/java-asm-season-03.html) | [lsieun.github.io](https://lsieun.github.io/java/asm/java-asm-season-03.html) | [51CTO博客](https://blog.51cto.com/lsieun/4034588)
-  - 视频地址：[B站](https://space.bilibili.com/1321054247/channel/seriesdetail?sid=381716)
+  - 文章地址：[lsieun.cn](https://lsieun.cn/java/asm/java-asm-season-03.html) | [lsieun.github.io](https://lsieun.github.io/java/asm/java-asm-season-03.html) | [51CTO](https://blog.51cto.com/lsieun/4034588)
+  - 视频地址：[Bilibili](https://space.bilibili.com/1321054247/channel/seriesdetail?sid=381716)
+
+### 2.1. ASM的组成部分
+
+从组成结构上来说，Java ASM有Core API和Tree API两部分组成。
+
+```text
+                                   ┌─── asm.jar
+                                   │
+            ┌─── Core API ─────────┼─── asm-util.jar
+            │                      │
+            │                      └─── asm-commons.jar
+Java ASM ───┤
+            │
+            │                      ┌─── asm-tree.jar
+            └─── Tree API ─────────┤
+                                   └─── asm-analysis.jar
+```
+
+从依赖关系角度上说，Java ASM当中的各个`.jar`之间的依赖关系如下：
+
+```text
+┌────────────────────────────┬─────────────────────────────┐
+│                    ┌───────┴────────┐                    │
+│     util           │    analysis    │         commons    │
+│             ┌──────┴────────────────┴──────┐             │
+│             │             tree             │             │
+├─────────────┴──────────────────────────────┴─────────────┤
+│                           core                           │
+└──────────────────────────────────────────────────────────┘
+```
+
+### 2.2. ASM能够做什么
+
+从应用的角度来说，Java ASM可以进行Class Generation、Class Transformation和Class Analysis三个类型的操作。
+
+```text
+                                   ┌─── find potential bugs
+                                   │
+            ┌─── analysis ─────────┼─── detect unused code
+            │                      │
+            │                      └─── reverse engineer code
+            │
+Java ASM ───┼─── generation
+            │
+            │                      ┌─── optimize programs
+            │                      │
+            └─── transformation ───┼─── obfuscate programs
+                                   │
+                                   └─── insert performance monitoring code
+```
+
+
 
 ## 3. 注意事项
 
