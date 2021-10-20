@@ -233,7 +233,61 @@ public class BoxDrawingUtils {
         return sb.toString();
     }
 
+    // TODO: 功能有待于完善
     public static void printCFG(InsnList instructions, ControlFlowGraph cfg) {
-        //
+        InsnText insnText = new InsnText();
+        List<String> lines = insnText.toLines(instructions.toArray());
+        int width = 0;
+        for (String line : lines) {
+            if (line == null) continue;
+            if (line.length() > width) {
+                width = line.length();
+            }
+        }
+
+        int size = instructions.size();
+        for (int i = 0; i < size; i++) {
+            String cellTop = getCellBorder(width, LIGHT_DOWN_AND_RIGHT, LIGHT_DOWN_AND_LEFT);
+            System.out.println(cellTop);
+
+            AbstractInsnNode currentNode = instructions.get(i);
+            List<String> list = insnText.toLines(currentNode);
+            for (String item : list) {
+                String cellValue = getCellValue(width, item, LIGHT_VERTICAL, LIGHT_VERTICAL);
+                System.out.println(cellValue);
+            }
+
+            String cellBottom = getCellBorder(width, LIGHT_UP_AND_RIGHT, LIGHT_UP_AND_LEFT);
+            System.out.println(cellBottom);
+            System.out.println();
+        }
+    }
+
+    private static String getCellBorder(int width, String leftItem, String rightItem) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(leftItem);
+        for (int i = 0; i < width + 2; i++) {
+            sb.append(LIGHT_HORIZONTAL);
+        }
+        sb.append(rightItem);
+        return sb.toString();
+    }
+
+    private static String getCellValue(int width, String val, String leftItem, String rightItem) {
+        int expectedCellWidth = width + 2;
+        StringBuilder sb = new StringBuilder();
+        sb.append(leftItem);
+        int valLength = val.length();
+        int leftBlank = 1;
+        for (int j = 0; j < leftBlank; j++) {
+            sb.append(SPACE);
+        }
+        sb.append(val);
+        int rightBlank = expectedCellWidth - leftBlank - valLength;
+        for (int j = 0; j < rightBlank; j++) {
+            sb.append(SPACE);
+        }
+        sb.append(rightItem);
+        return sb.toString();
     }
 }

@@ -1,10 +1,11 @@
 package run;
 
-import lsieun.asm.analysis.*;
+import lsieun.asm.analysis.CyclomaticComplexity;
 import lsieun.utils.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
 import java.util.List;
 
@@ -19,18 +20,17 @@ public class HelloWorldAnalysisTree {
 
         //（2）生成ClassNode
         int api = Opcodes.ASM9;
-        ClassNode cn = new ClassNode();
+        ClassNode cn = new ClassNode(api);
 
         int parsingOptions = ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES;
         cr.accept(cn, parsingOptions);
 
         //（3）进行分析
         List<MethodNode> methods = cn.methods;
+        MethodNode mn = methods.get(1);
         CyclomaticComplexity cc = new CyclomaticComplexity();
-        for (MethodNode mn : methods) {
-            int complexity = cc.getCyclomaticComplexity(cn.name, mn);
-            String line = String.format("%s:%s%n    complexity: %d", mn.name, mn.desc, complexity);
-            System.out.println(line);
-        }
+        int complexity = cc.getCyclomaticComplexity(cn.name, mn);
+        String line = String.format("%s:%s%n    complexity: %d", mn.name, mn.desc, complexity);
+        System.out.println(line);
     }
 }

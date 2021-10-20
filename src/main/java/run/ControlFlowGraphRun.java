@@ -7,6 +7,7 @@ import lsieun.utils.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
 import org.objectweb.asm.tree.analysis.BasicValue;
 
@@ -37,16 +38,27 @@ public class ControlFlowGraphRun {
             }
         }
         if (targetNode == null) {
-            throw new RuntimeException("Can not find method: " + methodName);
+            System.out.println("Can not find method: " + methodName);
+            return;
         }
 
-        //（4）进行分析
+        //（4）进行图形化显示
+        display(cn.name, targetNode, 2);
+
+        //（5）打印复杂度
+        CyclomaticComplexity cc = new CyclomaticComplexity();
+        int complexity = cc.getCyclomaticComplexity(cn.name, targetNode);
+        String line = String.format("%s:%s complexity: %d", targetNode.name, targetNode.desc, complexity);
+        System.out.println(line);
+    }
+
+    private static void display(String owner, MethodNode mn, int option) throws AnalyzerException {
+        //（1）准备数据
         InsnBlock[] blocks;
-        int kind = 2;
-        switch (kind) {
+        switch (option) {
             case 0: {
                 InsnText insnText = new InsnText();
-                List<String> lines = insnText.toLines(targetNode.instructions.toArray());
+                List<String> lines = insnText.toLines(mn.instructions.toArray());
 
                 InsnBlock block = new InsnBlock();
                 block.addLines(lines);
@@ -57,37 +69,31 @@ public class ControlFlowGraphRun {
             }
             case 1: {
                 ControlFlowEdgeAnalyzer<BasicValue> analyzer = new ControlFlowEdgeAnalyzer<>(new BasicInterpreter());
-                analyzer.analyze(cn.name, targetNode);
+                analyzer.analyze(owner, mn);
                 blocks = analyzer.getBlocks();
                 break;
             }
             case 2: {
                 ControlFlowEdgeAnalyzer<BasicValue> analyzer = new ControlFlowEdgeAnalyzer2<>(new BasicInterpreter());
-                analyzer.analyze(cn.name, targetNode);
+                analyzer.analyze(owner, mn);
                 blocks = analyzer.getBlocks();
                 break;
             }
             case 3: {
                 ControlFlowAnalyzer2 analyzer = new ControlFlowAnalyzer2();
-                analyzer.analyze(cn.name, targetNode);
+                analyzer.analyze(owner, mn);
                 blocks = analyzer.getBlocks();
                 break;
             }
             default: {
                 ControlFlowGraphAnalyzer analyzer = new ControlFlowGraphAnalyzer();
-                analyzer.analyze(targetNode);
+                analyzer.analyze(mn);
                 blocks = analyzer.getBlocks();
             }
         }
 
-        //（5）图形显示
+        //（2）图形显示
         InsnGraph graph = new InsnGraph(blocks);
         graph.draw();
-
-        //（6）打印复杂度
-        CyclomaticComplexity cc = new CyclomaticComplexity();
-        int complexity = cc.getCyclomaticComplexity(cn.name, targetNode);
-        String line = String.format("%s:%s complexity: %d", targetNode.name, targetNode.desc, complexity);
-        System.out.println(line);
     }
 }

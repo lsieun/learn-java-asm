@@ -2,10 +2,10 @@ package run;
 
 import lsieun.asm.analysis.InsnText;
 import lsieun.asm.analysis.transition.DestinationInterpreter;
-import lsieun.utils.ValueUtils;
 import lsieun.cst.Const;
 import lsieun.utils.FileUtils;
 import lsieun.utils.FrameUtils;
+import lsieun.utils.ValueUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -34,7 +34,7 @@ public class HelloWorldFrameTree {
         String owner = cn.name;
         List<MethodNode> methods = cn.methods;
         for (MethodNode mn : methods) {
-            print(owner, mn, 7);
+            print(owner, mn, 4);
         }
     }
 
@@ -52,23 +52,26 @@ public class HelloWorldFrameTree {
                 print(owner, mn, new SimpleVerifier(), null);
                 break;
             case 4:
-                print(owner, mn, new SimpleVerifier(), ValueUtils::fromBasicValue2String);
+                print(owner, mn, new SimpleVerifier(), item -> ValueUtils.fromBasicValue2String(item) + "@" + System.identityHashCode(item));
                 break;
             case 5:
-                print(owner, mn, new SourceInterpreter(), null);
+                print(owner, mn, new SimpleVerifier(), ValueUtils::fromBasicValue2String);
                 break;
             case 6:
-                print(owner, mn, new SourceInterpreter(), sourceValue -> insnText.toLines(sourceValue.insns.toArray(new AbstractInsnNode[0])));
+                print(owner, mn, new SourceInterpreter(), null);
                 break;
             case 7:
+                print(owner, mn, new SourceInterpreter(), sourceValue -> insnText.toLines(sourceValue.insns.toArray(new AbstractInsnNode[0])));
+                break;
+            case 8:
                 print(owner, mn, new SourceInterpreter(), sourceValue ->
                         ValueUtils.fromSourceValue2Index(mn, sourceValue)
                 );
                 break;
-            case 8:
+            case 9:
                 print(owner, mn, new DestinationInterpreter(), sourceValue -> insnText.toLines(sourceValue.insns.toArray(new AbstractInsnNode[0])));
                 break;
-            case 9:
+            case 10:
                 print(owner, mn, new DestinationInterpreter(), sourceValue ->
                         ValueUtils.fromSourceValue2Index(mn, sourceValue)
                 );
@@ -87,15 +90,13 @@ public class HelloWorldFrameTree {
         int size = instructions.size();
         InsnText insnText = new InsnText();
 
-
         //（2）获取Frame信息
         Analyzer<V> analyzer = new Analyzer<>(interpreter);
-        analyzer.analyze(owner, mn);
-        Frame<V>[] frames = analyzer.getFrames();
+        Frame<V>[] frames = analyzer.analyze(owner, mn);
 
         //（3）结合Instruction信息和Frame信息
         // NOTE: 右对齐，使用“%36s”；左对齐，使用“%-36s”。
-        String format = "%03d:    %36s    %s";
+        String format = "%03d:    %-36s    %s";
         for (int index = 0; index < size; index++) {
             AbstractInsnNode node = instructions.get(index);
             List<String> nodeLines = insnText.toLines(node);
@@ -106,7 +107,9 @@ public class HelloWorldFrameTree {
             String firstLine = String.format(format, index, nodeLines.get(0), frameLine);
             System.out.println(firstLine);
             for (int i = 1; i < nodeLines.size(); i++) {
-                System.out.println(nodeLines.get(i));
+                String item = nodeLines.get(i);
+                String line = String.format("%4s    %-36s", "", item);
+                System.out.println(line);
             }
         }
 
