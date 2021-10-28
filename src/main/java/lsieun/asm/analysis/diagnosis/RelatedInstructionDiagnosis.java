@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MethodArgumentDiagnosis {
+public class RelatedInstructionDiagnosis {
     public static int[] diagnose(String className, MethodNode mn, int insnIndex) throws AnalyzerException {
-        // （1）判断insnIndex是否合理
+        // 第一步，判断insnIndex范围是否合理
         InsnList instructions = mn.instructions;
         int size = instructions.size();
         if (insnIndex < 0 || insnIndex >= size) {
@@ -23,14 +23,13 @@ public class MethodArgumentDiagnosis {
             throw new IllegalArgumentException(message);
         }
 
-        // （2）获取两个Frame
+        // 第二步，获取两个Frame
         Frame<SourceValue>[] sourceFrames = getSourceFrames(className, mn);
         Frame<SourceValue>[] destinationFrames = getDestinationFrames(className, mn);
 
-        // （3）所有结果记录到这个intArrayList变量中
+        // 第三步，循环处理，所有结果记录到这个intArrayList变量中
         TIntArrayList intArrayList = new TIntArrayList();
-
-        // （4）循环处理，将结果记录到intArrayList变量中
+        // 循环tmpInsnList
         List<AbstractInsnNode> tmpInsnList = new ArrayList<>();
         AbstractInsnNode insnNode = instructions.get(insnIndex);
         tmpInsnList.add(insnNode);
@@ -69,7 +68,7 @@ public class MethodArgumentDiagnosis {
             }
         }
 
-        // （5）将intArrayList变量转换成int[]，并进行排序
+        // 第四步，将intArrayList变量转换成int[]，并进行排序
         int[] array = intArrayList.toNativeArray();
         Arrays.sort(array);
         return array;
