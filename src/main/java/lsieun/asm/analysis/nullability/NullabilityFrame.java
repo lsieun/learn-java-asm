@@ -7,7 +7,7 @@ import org.objectweb.asm.tree.analysis.Frame;
 import java.util.ArrayList;
 import java.util.List;
 
-import static lsieun.asm.analysis.nullability.NullabilityValue.*;
+import static lsieun.asm.analysis.nullability.NullabilityUtils.*;
 
 public class NullabilityFrame extends Frame<NullabilityValue> {
     private static final String START = "{";

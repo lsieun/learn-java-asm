@@ -26,10 +26,11 @@ public class HelloWorldAnalysisTree {
         cr.accept(cn, parsingOptions);
 
         //（3）进行分析
+        String className = cn.name;
         List<MethodNode> methods = cn.methods;
         MethodNode mn = methods.get(1);
         CyclomaticComplexity cc = new CyclomaticComplexity();
-        int complexity = cc.getCyclomaticComplexity(cn.name, mn);
+        int complexity = cc.getCyclomaticComplexity(className, mn);
         String line = String.format("%s:%s%n    complexity: %d", mn.name, mn.desc, complexity);
         System.out.println(line);
     }

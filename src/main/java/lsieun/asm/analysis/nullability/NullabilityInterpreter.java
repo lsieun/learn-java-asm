@@ -11,7 +11,7 @@ import org.objectweb.asm.tree.analysis.Interpreter;
 
 import java.util.List;
 
-import static lsieun.asm.analysis.nullability.NullabilityValue.*;
+import static lsieun.asm.analysis.nullability.NullabilityUtils.*;
 
 public class NullabilityInterpreter extends Interpreter<NullabilityValue> implements Opcodes {
     public NullabilityInterpreter(int api) {
@@ -365,7 +365,7 @@ public class NullabilityInterpreter extends Interpreter<NullabilityValue> implem
         }
 
         if (Const.DEBUG) {
-            String line = String.format("[DEBUG] merge: %s + %s = %s", value1, value2, result);
+            String line = String.format("[DEBUG] merge: %s + %s = %s", NullabilityUtils.getString(value1), NullabilityUtils.getString(value2), NullabilityUtils.getString(result));
             System.out.println(line);
         }
         return result;

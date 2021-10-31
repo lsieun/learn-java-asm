@@ -10,7 +10,7 @@ import java.util.List;
 public class ReverseEngineerMethodArgumentsDiagnosis {
     private static final String UNKNOWN_VARIABLE_NAME = "unknown";
 
-    public static void analyze(String className, MethodNode mn) throws AnalyzerException {
+    public static void diagnose(String className, MethodNode mn) throws AnalyzerException {
         // 第一步，获取Frame信息
         Analyzer<SourceValue> analyzer = new Analyzer<>(new SourceInterpreter());
         Frame<SourceValue>[] frames = analyzer.analyze(className, mn);
