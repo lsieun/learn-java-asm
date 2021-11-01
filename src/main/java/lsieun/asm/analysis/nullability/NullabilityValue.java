@@ -24,6 +24,10 @@ public class NullabilityValue implements Value {
         this.state = state;
     }
 
+    public Nullability getState() {
+        return state;
+    }
+
     @Override
     public int getSize() {
         return type == Type.LONG_TYPE || type == Type.DOUBLE_TYPE ? 2 : 1;
@@ -39,11 +43,12 @@ public class NullabilityValue implements Value {
             return true;
         }
         else if (value instanceof NullabilityValue) {
+            NullabilityValue another = (NullabilityValue) value;
             if (type == null) {
                 return ((NullabilityValue) value).type == null;
             }
             else {
-                return type.equals(((NullabilityValue) value).type);
+                return type.equals(((NullabilityValue) value).type) && state == another.state;
             }
         }
         else {

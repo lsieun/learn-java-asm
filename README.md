@@ -141,7 +141,21 @@ Java ASM ───┼─── generation
                                    └─── insert performance monitoring code
 ```
 
+### 2.3. top, null和void
 
+在下表当中，top、null和void三者相对应的转换值：
+
+```text
+┌─────────────┬────────────────────────────┬────────────────────────────────┐
+│   .class    │          ASM Type          │      ASM Value in Frame        │
+├─────────────┼────────────────────────────┼────────────────────────────────┤
+│     top     │            null            │ BasicValue.UNINITIALIZED_VALUE │
+├─────────────┼────────────────────────────┼────────────────────────────────┤
+│ aconst_null │ BasicInterpreter.NULL_TYPE │   BasicValue.REFERENCE_VALUE   │
+├─────────────┼────────────────────────────┼────────────────────────────────┤
+│    void     │       Type.VOID_TYPE       │              null              │
+└─────────────┴────────────────────────────┴────────────────────────────────┘
+```
 
 ## 3. 注意事项
 

@@ -78,7 +78,7 @@ public class BoxDrawingUtils {
             else if ((min == max)) {
                 // NOTE: 如果min和max相等，那么 i == min == max。
                 //       由于第1个条件的判断，此时min < i < max，再加上min == max，所以i == min == max。
-                firstPart = BoxDrawingUtils.getRight(1, LIGHT_DIAGONAL_CROSS, n - 1, LIGHT_HORIZONTAL);
+                firstPart = BoxDrawingUtils.getRight(1, LIGHT_VERTICAL_AND_RIGHT, n - 1, LIGHT_HORIZONTAL);
             }
             else if (i == min) {
                 firstPart = BoxDrawingUtils.getRight(1, LIGHT_DOWN_AND_RIGHT, n - 1, LIGHT_HORIZONTAL);

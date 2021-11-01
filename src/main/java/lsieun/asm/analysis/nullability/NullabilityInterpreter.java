@@ -1,6 +1,5 @@
 package lsieun.asm.analysis.nullability;
 
-import lsieun.cst.Const;
 import org.objectweb.asm.ConstantDynamic;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
@@ -11,9 +10,14 @@ import org.objectweb.asm.tree.analysis.Interpreter;
 
 import java.util.List;
 
-import static lsieun.asm.analysis.nullability.NullabilityUtils.*;
-
 public class NullabilityInterpreter extends Interpreter<NullabilityValue> implements Opcodes {
+    public static final Type NULL_TYPE = Type.getObjectType("null");
+
+    public static final NullabilityValue UNINITIALIZED_VALUE = new NullabilityValue(null);
+    public static final NullabilityValue RETURN_ADDRESS_VALUE = new NullabilityValue(Type.VOID_TYPE);
+
+    private final ClassLoader loader = getClass().getClassLoader();
+
     public NullabilityInterpreter(int api) {
         super(api);
     }
@@ -25,34 +29,17 @@ public class NullabilityInterpreter extends Interpreter<NullabilityValue> implem
         }
 
         int sort = type.getSort();
-        switch (sort) {
-            case Type.VOID:
-                return null;
-            case Type.BOOLEAN:
-            case Type.CHAR:
-            case Type.BYTE:
-            case Type.SHORT:
-            case Type.INT:
-                return INT_VALUE;
-            case Type.FLOAT:
-                return FLOAT_VALUE;
-            case Type.LONG:
-                return LONG_VALUE;
-            case Type.DOUBLE:
-                return DOUBLE_VALUE;
-            case Type.ARRAY:
-            case Type.OBJECT:
-                return new NullabilityValue(type);
-            default:
-                throw new AssertionError();
+        if (sort == Type.VOID) {
+            return null;
         }
+        return new NullabilityValue(type);
     }
 
     @Override
     public NullabilityValue newOperation(AbstractInsnNode insn) throws AnalyzerException {
         switch (insn.getOpcode()) {
             case ACONST_NULL:
-                return NULL_VALUE;
+                return new NullabilityValue(NULL_TYPE, Nullability.NULL);
             case ICONST_M1:
             case ICONST_0:
             case ICONST_1:
@@ -62,33 +49,33 @@ public class NullabilityInterpreter extends Interpreter<NullabilityValue> implem
             case ICONST_5:
             case BIPUSH:
             case SIPUSH:
-                return INT_VALUE;
+                return newValue(Type.INT_TYPE);
             case LCONST_0:
             case LCONST_1:
-                return LONG_VALUE;
+                return newValue(Type.LONG_TYPE);
             case FCONST_0:
             case FCONST_1:
             case FCONST_2:
-                return FLOAT_VALUE;
+                return newValue(Type.FLOAT_TYPE);
             case DCONST_0:
             case DCONST_1:
-                return DOUBLE_VALUE;
+                return newValue(Type.DOUBLE_TYPE);
             case LDC:
                 Object value = ((LdcInsnNode) insn).cst;
                 if (value instanceof Integer) {
-                    return INT_VALUE;
+                    return newValue(Type.INT_TYPE);
                 }
                 else if (value instanceof Float) {
-                    return FLOAT_VALUE;
+                    return newValue(Type.FLOAT_TYPE);
                 }
                 else if (value instanceof Long) {
-                    return LONG_VALUE;
+                    return newValue(Type.LONG_TYPE);
                 }
                 else if (value instanceof Double) {
-                    return DOUBLE_VALUE;
+                    return newValue(Type.DOUBLE_TYPE);
                 }
                 else if (value instanceof String) {
-                    return newValue(Type.getObjectType("java/lang/String"));
+                    return new NullabilityValue(Type.getObjectType("java/lang/String"), Nullability.NOT_NULL);
                 }
                 else if (value instanceof Type) {
                     int sort = ((Type) value).getSort();
@@ -140,22 +127,22 @@ public class NullabilityInterpreter extends Interpreter<NullabilityValue> implem
             case I2S:
             case ARRAYLENGTH:
             case INSTANCEOF:
-                return INT_VALUE;
+                return newValue(Type.INT_TYPE);
             case FNEG:
             case I2F:
             case L2F:
             case D2F:
-                return FLOAT_VALUE;
+                return newValue(Type.FLOAT_TYPE);
             case LNEG:
             case I2L:
             case F2L:
             case D2L:
-                return LONG_VALUE;
+                return newValue(Type.LONG_TYPE);
             case DNEG:
             case I2D:
             case L2D:
             case F2D:
-                return DOUBLE_VALUE;
+                return newValue(Type.DOUBLE_TYPE);
             case GETFIELD:
                 return newValue(Type.getType(((FieldInsnNode) insn).desc));
             case NEWARRAY:
@@ -234,14 +221,14 @@ public class NullabilityInterpreter extends Interpreter<NullabilityValue> implem
             case FCMPG:
             case DCMPL:
             case DCMPG:
-                return INT_VALUE;
+                return newValue(Type.INT_TYPE);
             case FALOAD:
             case FADD:
             case FSUB:
             case FMUL:
             case FDIV:
             case FREM:
-                return FLOAT_VALUE;
+                return newValue(Type.FLOAT_TYPE);
             case LALOAD:
             case LADD:
             case LSUB:
@@ -254,16 +241,16 @@ public class NullabilityInterpreter extends Interpreter<NullabilityValue> implem
             case LAND:
             case LOR:
             case LXOR:
-                return LONG_VALUE;
+                return newValue(Type.LONG_TYPE);
             case DALOAD:
             case DADD:
             case DSUB:
             case DMUL:
             case DDIV:
             case DREM:
-                return DOUBLE_VALUE;
+                return newValue(Type.LONG_TYPE);
             case AALOAD:
-                return UNKNOWN_VALUE;
+                return getElementValue(value1);
             case IF_ICMPEQ:
             case IF_ICMPNE:
             case IF_ICMPLT:
@@ -311,79 +298,156 @@ public class NullabilityInterpreter extends Interpreter<NullabilityValue> implem
 
     @Override
     public NullabilityValue merge(NullabilityValue value1, NullabilityValue value2) {
-        NullabilityValue result;
-        if (value1.isReference() && value2.isReference()) {
-            // 这里的情况是：two reference types
-            if (value1.equals(value2)) {
-                // unknown + unknown = unknown(特殊性)
-                // not-null + not-null = not-null
-                // null + null = null
-                // nullable + nullable = nullable
-                result = value1;
+        // 合并两者的状态
+        Nullability mergedState = Nullability.merge(value1.getState(), value2.getState());
+
+
+        // 第一种情况，两个value的类型相同且状态（state）相同
+        if (value1.equals(value2)) {
+            return value1;
+        }
+
+        // 第二种情况，两个value的类型相同，但状态（state）不同，需要合并它们的状态（state）
+        Type type1 = value1.getType();
+        Type type2 = value2.getType();
+        if (type1 != null && type1.equals(type2)) {
+            Type type = value1.getType();
+            return new NullabilityValue(type, mergedState);
+        }
+
+        // 第三种情况，两个value的类型不相同的，而且要合并它们的状态（state）
+        if (type1 != null
+                && (type1.getSort() == Type.OBJECT || type1.getSort() == Type.ARRAY)
+                && type2 != null
+                && (type2.getSort() == Type.OBJECT || type2.getSort() == Type.ARRAY)) {
+            if (type1.equals(NULL_TYPE)) {
+                return new NullabilityValue(type2, mergedState);
             }
-            else if (isNullable(value1) || isNullable(value2)) {
-                // nullable + other = nullable
-                result = NULLABLE_VALUE;
+            if (type2.equals(NULL_TYPE)) {
+                return new NullabilityValue(type1, mergedState);
             }
-            else if ((isNull(value1) && isNotNull(value2)) ||
-                    (isNotNull(value1) && isNull(value2))) {
-                // not-null + null = nullable
-                result = NULLABLE_VALUE;
+            if (isAssignableFrom(type1, type2)) {
+                return new NullabilityValue(type1, mergedState);
             }
-            else if ((isNotNull(value1) && isUnknown(value2)) ||
-                    (isUnknown(value1) && isNotNull(value2))) {
-                // unknown + not-null = not-null
-                result = NOT_NULL_VALUE;
+            if (isAssignableFrom(type2, type1)) {
+                return new NullabilityValue(type2, mergedState);
             }
-            else if ((isNull(value1) && isUnknown(value2)) ||
-                    (isUnknown(value1) && isNull(value2))) {
-                // unknown + null = null
-                result = NULL_VALUE;
+            int numDimensions = 0;
+            if (type1.getSort() == Type.ARRAY
+                    && type2.getSort() == Type.ARRAY
+                    && type1.getDimensions() == type2.getDimensions()
+                    && type1.getElementType().getSort() == Type.OBJECT
+                    && type2.getElementType().getSort() == Type.OBJECT) {
+                numDimensions = type1.getDimensions();
+                type1 = type1.getElementType();
+                type2 = type2.getElementType();
             }
-            else if (isUnknown(value1) && isUnknown(value2)) {
-                // unknown + unknown = unknown（一般性）
-                // NOTE: 这里的处理有点“草率”。
-                //       从整体思路上来说，返回一个UNKNOWN_VALUE，不会出现什么错误；
-                //  但是，从严谨性角度来说，应该计算value1和value2的共同父类是谁。
-                //       为了代码简单，我选择了直接返回UNKNOWN_VALUE
-                result = UNKNOWN_VALUE;
+
+
+            while (true) {
+                if (type1 == null || isInterface(type1)) {
+                    NullabilityValue arrayValue = newArrayValue(Type.getObjectType("java/lang/Object"), numDimensions);
+                    return new NullabilityValue(arrayValue.getType(), mergedState);
+                }
+                type1 = getSuperClass(type1);
+                if (isAssignableFrom(type1, type2)) {
+                    NullabilityValue arrayValue = newArrayValue(type1, numDimensions);
+                    return new NullabilityValue(arrayValue.getType(), mergedState);
+                }
             }
-            else {
-                throw new RuntimeException(String.format("value1: %s, value2: %s", value1, value2));
-            }
+        }
+        return UNINITIALIZED_VALUE;
+    }
+
+    protected boolean isInterface(final Type type) {
+        return getClass(type).isInterface();
+    }
+
+    protected Type getSuperClass(final Type type) {
+        Class<?> superClass = getClass(type).getSuperclass();
+        return superClass == null ? null : Type.getType(superClass);
+    }
+
+    private NullabilityValue newArrayValue(final Type type, final int dimensions) {
+        if (dimensions == 0) {
+            return newValue(type);
         }
         else {
-            // 这里可能有两种情况：
-            // 第一种情况：two primitive types
-            // 第二种情况：one primitive type + one reference type
-            if (!value1.equals(value2)) {
-                result = UNINITIALIZED_VALUE;
+            StringBuilder descriptor = new StringBuilder();
+            for (int i = 0; i < dimensions; ++i) {
+                descriptor.append('[');
             }
-            else {
-                result = value1;
+            descriptor.append(type.getDescriptor());
+            return newValue(Type.getType(descriptor.toString()));
+        }
+    }
+
+    protected NullabilityValue getElementValue(final NullabilityValue objectArrayValue) {
+        Type arrayType = objectArrayValue.getType();
+        if (arrayType != null) {
+            if (arrayType.getSort() == Type.ARRAY) {
+                return newValue(Type.getType(arrayType.getDescriptor().substring(1)));
+            }
+            else if (arrayType.equals(NULL_TYPE)) {
+                return objectArrayValue;
             }
         }
+        throw new AssertionError();
+    }
 
-        if (Const.DEBUG) {
-            String line = String.format("[DEBUG] merge: %s + %s = %s", NullabilityUtils.getString(value1), NullabilityUtils.getString(value2), NullabilityUtils.getString(result));
-            System.out.println(line);
+    protected boolean isSubTypeOf(final NullabilityValue value, final NullabilityValue expected) {
+        Type expectedType = expected.getType();
+        Type type = value.getType();
+        switch (expectedType.getSort()) {
+            case Type.INT:
+            case Type.FLOAT:
+            case Type.LONG:
+            case Type.DOUBLE:
+                return type.equals(expectedType);
+            case Type.ARRAY:
+            case Type.OBJECT:
+                if (type.equals(NULL_TYPE)) {
+                    return true;
+                }
+                else if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
+                    if (isAssignableFrom(expectedType, type)) {
+                        return true;
+                    }
+                    else if (getClass(expectedType).isInterface()) {
+                        // The merge of class or interface types can only yield class types (because it is not
+                        // possible in general to find an unambiguous common super interface, due to multiple
+                        // inheritance). Because of this limitation, we need to relax the subtyping check here
+                        // if 'value' is an interface.
+                        return Object.class.isAssignableFrom(getClass(type));
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return false;
+                }
+            default:
+                throw new AssertionError();
         }
-        return result;
     }
 
-    private boolean isUnknown(NullabilityValue value) {
-        return value.isReference() && (value != NOT_NULL_VALUE) && (value != NULL_VALUE) && (value != NULLABLE_VALUE);
+    protected boolean isAssignableFrom(final Type type1, final Type type2) {
+        if (type1.equals(type2)) {
+            return true;
+        }
+        return getClass(type1).isAssignableFrom(getClass(type2));
     }
 
-    private boolean isNotNull(NullabilityValue value) {
-        return (value == NOT_NULL_VALUE);
-    }
-
-    private boolean isNull(NullabilityValue value) {
-        return (value == NULL_VALUE);
-    }
-
-    private boolean isNullable(NullabilityValue value) {
-        return (value == NULLABLE_VALUE);
+    protected Class<?> getClass(final Type type) {
+        try {
+            if (type.getSort() == Type.ARRAY) {
+                return Class.forName(type.getDescriptor().replace('/', '.'), false, loader);
+            }
+            return Class.forName(type.getClassName(), false, loader);
+        }
+        catch (ClassNotFoundException e) {
+            throw new TypeNotPresentException(e.toString(), e);
+        }
     }
 }

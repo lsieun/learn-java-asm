@@ -1,6 +1,7 @@
 package run;
 
 import lsieun.asm.analysis.*;
+import lsieun.asm.analysis.cc.CyclomaticComplexity;
 import lsieun.asm.analysis.graph.InsnBlock;
 import lsieun.asm.analysis.graph.InsnGraph;
 import lsieun.asm.analysis.graph.TextGraph;
@@ -47,8 +48,7 @@ public class ControlFlowGraphRun {
         display(cn.name, targetNode, 2);
 
         //（5）打印复杂度
-        CyclomaticComplexity cc = new CyclomaticComplexity();
-        int complexity = cc.getCyclomaticComplexity(cn.name, targetNode);
+        int complexity = CyclomaticComplexity.getCyclomaticComplexity(cn.name, targetNode);
         String line = String.format("%s:%s complexity: %d", targetNode.name, targetNode.desc, complexity);
         System.out.println(line);
     }

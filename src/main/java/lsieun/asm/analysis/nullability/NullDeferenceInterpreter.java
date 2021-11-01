@@ -1,5 +1,6 @@
 package lsieun.asm.analysis.nullability;
 
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.BasicInterpreter;
@@ -7,8 +8,8 @@ import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Value;
 
 public class NullDeferenceInterpreter extends BasicInterpreter {
-    public final static BasicValue NULL_VALUE = new BasicValue(null);
-    public final static BasicValue MAYBE_NULL_VALUE = new BasicValue(null);
+    public final static BasicValue NULL_VALUE = new BasicValue(NULL_TYPE);
+    public final static BasicValue MAYBE_NULL_VALUE = new BasicValue(Type.getObjectType("may-be-null"));
 
     public NullDeferenceInterpreter(int api) {
         super(api);

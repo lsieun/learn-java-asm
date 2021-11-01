@@ -1,6 +1,6 @@
 package run;
 
-import lsieun.asm.analysis.CyclomaticComplexity;
+import lsieun.asm.analysis.cc.CyclomaticComplexity;
 import lsieun.utils.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -29,8 +29,7 @@ public class HelloWorldAnalysisTree {
         String className = cn.name;
         List<MethodNode> methods = cn.methods;
         MethodNode mn = methods.get(1);
-        CyclomaticComplexity cc = new CyclomaticComplexity();
-        int complexity = cc.getCyclomaticComplexity(className, mn);
+        int complexity = CyclomaticComplexity.getCyclomaticComplexity(className, mn);
         String line = String.format("%s:%s%n    complexity: %d", mn.name, mn.desc, complexity);
         System.out.println(line);
     }
