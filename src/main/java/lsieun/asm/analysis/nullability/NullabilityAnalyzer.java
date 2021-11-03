@@ -1,8 +1,5 @@
 package lsieun.asm.analysis.nullability;
 
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.tree.analysis.Interpreter;
@@ -21,7 +18,4 @@ public class NullabilityAnalyzer extends Analyzer<NullabilityValue> {
     protected Frame<NullabilityValue> newFrame(int numLocals, int numStack) {
         return new NullabilityFrame(numLocals, numStack);
     }
-
-
-
 }

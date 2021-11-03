@@ -1,5 +1,8 @@
 package lsieun.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TextStateCanvas extends TextCanvas {
     private int row;
     private int col;
@@ -181,6 +184,9 @@ public class TextStateCanvas extends TextCanvas {
                 .switchUp().drawLine(7)
                 .switchLeft().drawLine(30);
 
+        List<String> mylist = new ArrayList<>();
+        mylist.add("...");
+        canvas.drawMultiLineTextWithBorder(30, 0, mylist);
         canvas.getLines().forEach(System.out::println);
 //        canvas.printPixels();
     }
