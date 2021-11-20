@@ -1,7 +1,10 @@
 package lsieun.asm.analysis.graph;
 
-import lsieun.utils.BoxDrawing;
-import lsieun.utils.TextStateCanvas;
+import lsieun.drawing.canvas.BoxDrawing;
+import lsieun.drawing.canvas.Canvas;
+import lsieun.drawing.canvas.TextDirection;
+import lsieun.drawing.theme.line.ContinuousLine;
+import lsieun.drawing.theme.text.PlainText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +17,13 @@ public class TextGraph {
     private final TextBox[] boxArray;
     private final int boxNum;
     private final int maxInstructionLength;
-    private final TextStateCanvas canvas;
+    private final Canvas canvas = new Canvas();
 
     public TextGraph(InsnBlock[] blockArray) {
         this.blockArray = blockArray;
         this.boxNum = blockArray.length;
         this.boxArray = new TextBox[boxNum];
         this.maxInstructionLength = findMaxStringLength(blockArray);
-        this.canvas = new TextStateCanvas();
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
@@ -32,22 +34,19 @@ public class TextGraph {
         for (int i = 0; i < length; i++) {
             InsnBlock block = blockArray[i];
 
-            int width = getOdd(maxInstructionLength + 4);
-            int height = block.lines.size() + 2;
+            int width = getOdd(maxInstructionLength + 2);
+            int height = block.lines.size();
 
             TextBox box = TextBox.valueOf(row, col, width, height);
             boxArray[i] = box;
             drawBoxAndText(box, block.lines);
 
-            row += height + ROW_SPACE;
+            row += height + ROW_SPACE + 2;
         }
 
         drawLinks();
 
-        List<String> lines = canvas.getLines();
-        for (String item : lines) {
-            System.out.println(item);
-        }
+        System.out.println(canvas);
     }
 
     private void drawBoxAndText(TextBox box, List<String> lines) {
@@ -56,8 +55,9 @@ public class TextGraph {
         int width = box.width;
         int height = box.height;
 
-        canvas.drawRectangle(row, col, height, width);
-        canvas.drawMultiLineText(row + 1, col + 2, lines);
+        canvas.moveTo(row, col);
+        canvas.drawRectangle(width, height);
+        canvas.draw(row + 1, col + 2, PlainText.valueOf(lines));
     }
 
     private void drawLinks() {
@@ -65,38 +65,49 @@ public class TextGraph {
             InsnBlock currentBlock = blockArray[i];
             TextBox currentBox = boxArray[i];
 
+            // draw next
             List<TextBox> nextBoxes = findBoxes(currentBlock.nextBlockList);
             for (TextBox nextBox : nextBoxes) {
-                int rowStart = currentBox.row + currentBox.height - 1;
+                int rowStart = currentBox.row + currentBox.height + 1;
                 int rowStop = nextBox.row;
                 int col = currentBox.col + currentBox.width / 2;
 
-                canvas.setPixel(rowStart, col, BoxDrawing.LIGHT_DOWN_AND_HORIZONTAL.val);
-                canvas.setPixel(rowStop, col, BoxDrawing.LIGHT_UP_AND_HORIZONTAL.val);
-                canvas.drawVerticalLine(rowStart + 1, col, rowStop - rowStart - 1);
+                canvas.moveTo(rowStart, col);
+                canvas.drawPixel(BoxDrawing.LIGHT_DOWN_AND_HORIZONTAL);
+                canvas.moveTo(rowStop, col);
+                canvas.drawPixel(BoxDrawing.LIGHT_UP_AND_HORIZONTAL);
+                canvas.moveTo(rowStart + 1, col).drawVerticalLine(rowStop - rowStart - 1);
             }
 
+            // draw jump
             List<TextBox> jumpBoxes = findBoxes(currentBlock.jumpBlockList);
             for (TextBox nextBox : jumpBoxes) {
-                int rowStart = currentBox.row + currentBox.height - 2;
+                int rowStart = currentBox.row + currentBox.height;
                 int rowStop = nextBox.row + 1;
-                int colStart = currentBox.col + currentBox.width - 1;
-                int colStop = currentBox.col + currentBox.width - 1 + (i + 1) * COL_SPACE;
-                canvas.setPixel(rowStart, colStart, BoxDrawing.LIGHT_VERTICAL_AND_RIGHT.val);
-                canvas.setPixel(rowStop, colStart, BoxDrawing.LIGHT_VERTICAL_AND_RIGHT.val);
+                int colStart = currentBox.col + currentBox.width + 1;
+                int colStop = currentBox.col + currentBox.width + 1 + (i + 1) * COL_SPACE;
+
+                canvas.moveTo(rowStart, colStart);
+                canvas.drawPixel(BoxDrawing.LIGHT_VERTICAL_AND_RIGHT);
+                canvas.moveTo(rowStop, colStart);
+                canvas.drawPixel(BoxDrawing.LIGHT_VERTICAL_AND_RIGHT);
 
                 if (rowStart < rowStop) {
-                    canvas.moveTo(rowStart, colStart + 1);
-                    canvas.turnRight().drawLine(colStop - colStart)
-                            .switchDown().drawLine(rowStop - rowStart - 1)
-                            .switchLeft().drawLine(colStop - colStart);
+                    ContinuousLine line = new ContinuousLine();
+                    line.setDirection(TextDirection.RIGHT);
+                    line.drawLine(colStop - colStart)
+                            .turn(TextDirection.DOWN).drawLine(rowStop - rowStart - 1)
+                            .turn(TextDirection.LEFT).drawLine(colStop - colStart);
+                    canvas.draw(rowStart, colStart + 1, line);
 
                 }
                 else {
-                    canvas.moveTo(rowStart, colStart + 1);
-                    canvas.turnRight().drawLine(colStop - colStart)
-                            .switchUp().drawLine(rowStart - rowStop - 1)
-                            .switchLeft().drawLine(colStop - colStart);
+                    ContinuousLine line = new ContinuousLine();
+                    line.setDirection(TextDirection.RIGHT);
+                    line.drawLine(colStop - colStart)
+                            .turn(TextDirection.UP).drawLine(rowStart - rowStop - 1)
+                            .turn(TextDirection.LEFT).drawLine(colStop - colStart);
+                    canvas.draw(rowStart, colStart + 1, line);
                 }
             }
         }

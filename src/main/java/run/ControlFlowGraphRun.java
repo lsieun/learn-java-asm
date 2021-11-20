@@ -3,7 +3,6 @@ package run;
 import lsieun.asm.analysis.*;
 import lsieun.asm.analysis.cc.CyclomaticComplexity;
 import lsieun.asm.analysis.graph.InsnBlock;
-import lsieun.asm.analysis.graph.InsnGraph;
 import lsieun.asm.analysis.graph.TextGraph;
 import lsieun.utils.FileUtils;
 import org.objectweb.asm.ClassReader;
@@ -94,9 +93,6 @@ public class ControlFlowGraphRun {
         }
 
         //（2）图形显示
-        InsnGraph graph = new InsnGraph(blocks);
-        graph.draw();
-
         TextGraph textGraph = new TextGraph(blocks);
         textGraph.draw(0, 0);
     }

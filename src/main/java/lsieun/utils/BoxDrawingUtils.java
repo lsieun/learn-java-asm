@@ -1,7 +1,11 @@
 package lsieun.utils;
 
 import lsieun.asm.analysis.InsnText;
-import lsieun.asm.analysis.cfg.ControlFlowGraph;
+import lsieun.drawing.canvas.BoxDrawing;
+import lsieun.drawing.canvas.Canvas;
+import lsieun.drawing.canvas.Drawable;
+import lsieun.drawing.canvas.TextAlign;
+import lsieun.drawing.theme.table.OneLineTable;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 
@@ -9,50 +13,6 @@ import java.util.List;
 
 public class BoxDrawingUtils {
     public static final String EMPTY = "";
-    public static final String SPACE = " ";
-
-    // Box-drawing character
-    public static final String LIGHT_HORIZONTAL = "─";
-    public static final String LIGHT_VERTICAL = "│";
-    public static final String LIGHT_DOWN_AND_RIGHT = "┌";
-    public static final String LIGHT_DOWN_AND_LEFT = "┐";
-    public static final String LIGHT_UP_AND_RIGHT = "└";
-    public static final String LIGHT_UP_AND_LEFT = "┘";
-    public static final String LIGHT_VERTICAL_AND_RIGHT = "├";
-    public static final String LIGHT_VERTICAL_AND_LEFT = "┤";
-    public static final String LIGHT_DOWN_AND_HORIZONTAL = "┬";
-    public static final String LIGHT_UP_AND_HORIZONTAL = "┴";
-    public static final String LIGHT_VERTICAL_AND_HORIZONTAL = "┼";
-    public static final String LIGHT_DIAGONAL_CROSS = "╳";
-
-
-    public static String getBlank(int n) {
-        return getItem(0, EMPTY, n, SPACE, 0, EMPTY);
-    }
-
-    public static String getRight(int middle, String middleItem, int right, String rightItem) {
-        return getItem(0, EMPTY, middle, middleItem, right, rightItem);
-    }
-
-    public static String getItem(int left, String leftItem, int middle, String middleItem, int right, String rightItem) {
-        return getItem(EMPTY, left, leftItem, middle, middleItem, right, rightItem, EMPTY);
-    }
-
-    public static String getItem(String prefix, int left, String leftItem, int middle, String middleItem, int right, String rightItem, String suffix) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(prefix);
-        for (int i = 0; i < left; i++) {
-            sb.append(leftItem);
-        }
-        for (int i = 0; i < middle; i++) {
-            sb.append(middleItem);
-        }
-        for (int i = 0; i < right; i++) {
-            sb.append(rightItem);
-        }
-        sb.append(suffix);
-        return sb.toString();
-    }
 
     public static void printInstructionLinks(InsnList instructions, int[] array) {
         if (array == null || array.length < 1) {
@@ -62,6 +22,9 @@ public class BoxDrawingUtils {
         InsnText insnText = new InsnText();
         int n = 5;
 
+        Canvas canvas = new Canvas();
+        int currentRow = 0;
+
         int size = instructions.size();
 
         int length = array.length;
@@ -70,56 +33,73 @@ public class BoxDrawingUtils {
         for (int i = 0; i < size; i++) {
             AbstractInsnNode node = instructions.get(i);
 
-
-            String firstPart;
+            canvas.moveTo(currentRow, 0);
             if (i < min || i > max) {
-                firstPart = BoxDrawingUtils.getBlank(n);
+                canvas.drawPixel(BoxDrawing.SPACE);
             }
             else if ((min == max)) {
                 // NOTE: 如果min和max相等，那么 i == min == max。
                 //       由于第1个条件的判断，此时min < i < max，再加上min == max，所以i == min == max。
-                firstPart = BoxDrawingUtils.getRight(1, LIGHT_VERTICAL_AND_RIGHT, n - 1, LIGHT_HORIZONTAL);
+                canvas.drawPixel(BoxDrawing.LIGHT_VERTICAL_AND_RIGHT);
+                canvas.right(1);
+                canvas.drawHorizontalLine(n - 1);
             }
             else if (i == min) {
-                firstPart = BoxDrawingUtils.getRight(1, LIGHT_DOWN_AND_RIGHT, n - 1, LIGHT_HORIZONTAL);
+                canvas.drawPixel(BoxDrawing.LIGHT_DOWN_AND_RIGHT);
+                canvas.right(1);
+                canvas.drawHorizontalLine(n - 1);
             }
             else if (i == max) {
-                firstPart = BoxDrawingUtils.getRight(1, LIGHT_UP_AND_RIGHT, n - 1, LIGHT_HORIZONTAL);
+                canvas.drawPixel(BoxDrawing.LIGHT_UP_AND_RIGHT);
+                canvas.right(1);
+                canvas.drawHorizontalLine(n - 1);
             }
             else if (contains(array, i)) {
-                firstPart = BoxDrawingUtils.getRight(1, LIGHT_VERTICAL_AND_RIGHT, n - 1, LIGHT_HORIZONTAL);
+                canvas.drawPixel(BoxDrawing.LIGHT_VERTICAL_AND_RIGHT);
+                canvas.right(1);
+                canvas.drawHorizontalLine(n - 1);
             }
             else {
-                firstPart = BoxDrawingUtils.getRight(1, LIGHT_VERTICAL, n - 1, SPACE);
+                canvas.drawPixel(BoxDrawing.LIGHT_VERTICAL);
             }
 
             List<String> lines = insnText.toLines(node);
             String secondPart;
             {
                 secondPart = lines.get(0);
-                String format1 = "%s %03d: %s";
+                String format1 = "%03d: %s";
+                String message = String.format(format1, i, secondPart);
 
-                String message = String.format(format1, firstPart, i, secondPart);
-                System.out.println(message);
+                canvas.moveTo(currentRow, 0);
+                canvas.right(5);
+                canvas.drawText(message);
             }
 
             if (lines.size() > 1) {
-                String format2 = "%s %4s %s";
+                BoxDrawing ch;
+                String format2 = "%4s %s";
                 if (i >= min && i <= max) {
-                    firstPart = BoxDrawingUtils.getRight(1, LIGHT_VERTICAL, n - 1, SPACE);
+                    ch = BoxDrawing.LIGHT_VERTICAL;
                 }
                 else {
-                    firstPart = BoxDrawingUtils.getBlank(n);
+                    ch = BoxDrawing.SPACE;
                 }
 
                 for (int j = 1; j < lines.size(); j++) {
                     secondPart = lines.get(j);
-                    String message = String.format(format2, firstPart, EMPTY, secondPart);
-                    System.out.println(message);
+                    String message = String.format(format2, EMPTY, secondPart);
+                    currentRow++;
+                    canvas.moveTo(currentRow, 0);
+                    canvas.drawPixel(ch);
+                    canvas.right(5);
+                    canvas.drawText(message);
                 }
             }
 
+            currentRow++;
         }
+
+        System.out.println(canvas);
     }
 
     private static boolean contains(int[] array, int val) {
@@ -132,162 +112,10 @@ public class BoxDrawingUtils {
     }
 
     public static void printTable(String[][] matrix) {
-        if (matrix == null) return;
-
-        int row = matrix.length;
-        int column = matrix[0].length;
-        if (column < 1) return;
-
-        int[] cellWidthArray = new int[column];
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < column; j++) {
-                String val = matrix[i][j];
-                if (val == null) continue;
-                int length = val.length();
-                if (length > cellWidthArray[j]) {
-                    cellWidthArray[j] = length;
-                }
-            }
-        }
-
-        {
-            String firstLine = getTableCellBorder(cellWidthArray, LIGHT_DOWN_AND_RIGHT, LIGHT_DOWN_AND_HORIZONTAL, LIGHT_DOWN_AND_LEFT);
-            System.out.println(firstLine);
-        }
-        for (int i = 0; i < row - 1; i++) {
-            String[] values = matrix[i];
-            String cellValue = getTableCellValue(cellWidthArray, values);
-            System.out.println(cellValue);
-            String middleLine = getTableCellBorder(cellWidthArray, LIGHT_VERTICAL_AND_RIGHT, LIGHT_VERTICAL_AND_HORIZONTAL, LIGHT_VERTICAL_AND_LEFT);
-            System.out.println(middleLine);
-        }
-        {
-            String[] values = matrix[row - 1];
-            String cellValue = getTableCellValue(cellWidthArray, values);
-            System.out.println(cellValue);
-            String lastLine = getTableCellBorder(cellWidthArray, LIGHT_UP_AND_RIGHT, LIGHT_UP_AND_HORIZONTAL, LIGHT_UP_AND_LEFT);
-            System.out.println(lastLine);
-        }
+        Drawable table = new OneLineTable(matrix, TextAlign.CENTER);
+        Canvas canvas = new Canvas();
+        canvas.draw(0, 0, table);
+        System.out.println(canvas);
     }
 
-    private static String getTableCellBorder(int[] cellWidthArray, String leftItem, String middleItem, String rightItem) {
-        int length = cellWidthArray.length;
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(leftItem);
-        for (int i = 0; i < length - 1; i++) {
-            int cellWidth = cellWidthArray[i] + 2;
-            for (int j = 0; j < cellWidth; j++) {
-                sb.append(LIGHT_HORIZONTAL);
-            }
-            sb.append(middleItem);
-        }
-
-        {
-            int cellWidth = cellWidthArray[length - 1] + 2;
-            for (int j = 0; j < cellWidth; j++) {
-                sb.append(LIGHT_HORIZONTAL);
-            }
-            sb.append(rightItem);
-        }
-
-        return sb.toString();
-    }
-
-    private static String getTableCellValue(int[] cellWidthArray, String[] values) {
-        int length = cellWidthArray.length;
-        StringBuilder sb = new StringBuilder();
-        sb.append(LIGHT_VERTICAL);
-
-        for (int i = 0; i < length - 1; i++) {
-            int expectedCellWidth = cellWidthArray[i] + 2;
-            String val = values[i];
-            int valLength = val.length();
-            int leftBlank = (expectedCellWidth - valLength) / 2;
-            for (int j = 0; j < leftBlank; j++) {
-                sb.append(SPACE);
-            }
-            sb.append(val);
-            int rightBlank = expectedCellWidth - leftBlank - valLength;
-            for (int j = 0; j < rightBlank; j++) {
-                sb.append(SPACE);
-            }
-            sb.append(LIGHT_VERTICAL);
-        }
-
-        {
-            int expectedCellWidth = cellWidthArray[length - 1] + 2;
-            String val = values[length - 1];
-            int valLength = val.length();
-            int leftBlank = (expectedCellWidth - valLength) / 2;
-            for (int j = 0; j < leftBlank; j++) {
-                sb.append(SPACE);
-            }
-            sb.append(val);
-            int rightBlank = expectedCellWidth - leftBlank - valLength;
-            for (int j = 0; j < rightBlank; j++) {
-                sb.append(SPACE);
-            }
-            sb.append(LIGHT_VERTICAL);
-        }
-        return sb.toString();
-    }
-
-    // TODO: 功能有待于完善
-    public static void printCFG(InsnList instructions, ControlFlowGraph cfg) {
-        InsnText insnText = new InsnText();
-        List<String> lines = insnText.toLines(instructions.toArray());
-        int width = 0;
-        for (String line : lines) {
-            if (line == null) continue;
-            if (line.length() > width) {
-                width = line.length();
-            }
-        }
-
-        int size = instructions.size();
-        for (int i = 0; i < size; i++) {
-            String cellTop = getCellBorder(width, LIGHT_DOWN_AND_RIGHT, LIGHT_DOWN_AND_LEFT);
-            System.out.println(cellTop);
-
-            AbstractInsnNode currentNode = instructions.get(i);
-            List<String> list = insnText.toLines(currentNode);
-            for (String item : list) {
-                String cellValue = getCellValue(width, item, LIGHT_VERTICAL, LIGHT_VERTICAL);
-                System.out.println(cellValue);
-            }
-
-            String cellBottom = getCellBorder(width, LIGHT_UP_AND_RIGHT, LIGHT_UP_AND_LEFT);
-            System.out.println(cellBottom);
-            System.out.println();
-        }
-    }
-
-    private static String getCellBorder(int width, String leftItem, String rightItem) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(leftItem);
-        for (int i = 0; i < width + 2; i++) {
-            sb.append(LIGHT_HORIZONTAL);
-        }
-        sb.append(rightItem);
-        return sb.toString();
-    }
-
-    private static String getCellValue(int width, String val, String leftItem, String rightItem) {
-        int expectedCellWidth = width + 2;
-        StringBuilder sb = new StringBuilder();
-        sb.append(leftItem);
-        int valLength = val.length();
-        int leftBlank = 1;
-        for (int j = 0; j < leftBlank; j++) {
-            sb.append(SPACE);
-        }
-        sb.append(val);
-        int rightBlank = expectedCellWidth - leftBlank - valLength;
-        for (int j = 0; j < rightBlank; j++) {
-            sb.append(SPACE);
-        }
-        sb.append(rightItem);
-        return sb.toString();
-    }
 }
