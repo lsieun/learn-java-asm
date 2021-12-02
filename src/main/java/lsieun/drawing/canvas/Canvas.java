@@ -68,11 +68,11 @@ public class Canvas {
     // endregion
 
     // region Point
-    public void drawPixel(BoxDrawing value) {
+    public void drawPixel(Box value) {
         TextPixel pixel = findPixel(row, col);
         if (pixel != null) {
-            if (BoxDrawing.isValid(pixel.value)) {
-                pixel.value = BoxDrawing.merge(pixel.value, value.val).val;
+            if (Box.isValid(pixel.value)) {
+                pixel.value = Box.merge(pixel.value, value.val).val;
             }
             else {
                 pixel.value = value.val;
@@ -100,35 +100,35 @@ public class Canvas {
 
     public Canvas switchDirection(TextDirection from, TextDirection to) {
         if (from == TextDirection.UP && to == TextDirection.LEFT) {
-            drawPixel(BoxDrawing.LIGHT_UP_AND_LEFT);
+            drawPixel(Box.UP_AND_LEFT);
             left(1);
         }
         else if (from == TextDirection.UP && to == TextDirection.RIGHT) {
-            drawPixel(BoxDrawing.LIGHT_UP_AND_RIGHT);
+            drawPixel(Box.UP_AND_RIGHT);
             right(1);
         }
         else if (from == TextDirection.RIGHT && to == TextDirection.UP) {
-            drawPixel(BoxDrawing.LIGHT_UP_AND_RIGHT);
+            drawPixel(Box.UP_AND_RIGHT);
             up(1);
         }
         else if (from == TextDirection.RIGHT && to == TextDirection.DOWN) {
-            drawPixel(BoxDrawing.LIGHT_DOWN_AND_RIGHT);
+            drawPixel(Box.DOWN_AND_RIGHT);
             down(1);
         }
         else if (from == TextDirection.DOWN && to == TextDirection.RIGHT) {
-            drawPixel(BoxDrawing.LIGHT_DOWN_AND_RIGHT);
+            drawPixel(Box.DOWN_AND_RIGHT);
             right(1);
         }
         else if (from == TextDirection.DOWN && to == TextDirection.LEFT) {
-            drawPixel(BoxDrawing.LIGHT_DOWN_AND_LEFT);
+            drawPixel(Box.DOWN_AND_LEFT);
             left(1);
         }
         else if (from == TextDirection.LEFT && to == TextDirection.DOWN) {
-            drawPixel(BoxDrawing.LIGHT_DOWN_AND_LEFT);
+            drawPixel(Box.DOWN_AND_LEFT);
             down(1);
         }
         else if (from == TextDirection.LEFT && to == TextDirection.UP) {
-            drawPixel(BoxDrawing.LIGHT_UP_AND_LEFT);
+            drawPixel(Box.UP_AND_LEFT);
             up(1);
         }
         else {
@@ -144,7 +144,7 @@ public class Canvas {
         int step = num > 0 ? 1 : -1;
         int count = Math.abs(num);
         for (int i = 0; i < count; i++) {
-            drawPixel(BoxDrawing.LIGHT_HORIZONTAL);
+            drawPixel(Box.HORIZONTAL);
             col += step;
         }
         return this;
@@ -154,7 +154,7 @@ public class Canvas {
         int step = num > 0 ? 1 : -1;
         int count = Math.abs(num);
         for (int i = 0; i < count; i++) {
-            drawPixel(BoxDrawing.LIGHT_VERTICAL);
+            drawPixel(Box.VERTICAL);
             row += step;
         }
         return this;
@@ -173,34 +173,34 @@ public class Canvas {
     // region Plane
     public void drawRectangle(int width, int height) {
         // left top
-        drawPixel(BoxDrawing.LIGHT_DOWN_AND_RIGHT);
+        drawPixel(Box.DOWN_AND_RIGHT);
         right(1);
         for (int i = 0; i < width; i++) {
-            drawPixel(BoxDrawing.LIGHT_HORIZONTAL);
+            drawPixel(Box.HORIZONTAL);
             right(1);
         }
 
         // right top
-        drawPixel(BoxDrawing.LIGHT_DOWN_AND_LEFT);
+        drawPixel(Box.DOWN_AND_LEFT);
         down(1);
         for (int i = 0; i < height; i++) {
-            drawPixel(BoxDrawing.LIGHT_VERTICAL);
+            drawPixel(Box.VERTICAL);
             down(1);
         }
 
         // right bottom
-        drawPixel(BoxDrawing.LIGHT_UP_AND_LEFT);
+        drawPixel(Box.UP_AND_LEFT);
         left(1);
         for (int i = 0; i < width; i++) {
-            drawPixel(BoxDrawing.LIGHT_HORIZONTAL);
+            drawPixel(Box.HORIZONTAL);
             left(1);
         }
 
         // right left
-        drawPixel(BoxDrawing.LIGHT_UP_AND_RIGHT);
+        drawPixel(Box.UP_AND_RIGHT);
         up(1);
         for (int i = 0; i < height; i++) {
-            drawPixel(BoxDrawing.LIGHT_VERTICAL);
+            drawPixel(Box.VERTICAL);
             up(1);
         }
     }
@@ -230,10 +230,10 @@ public class Canvas {
         for (int i = 0; i < colCount - 1; i++) {
             int width = colWidthArray[i];
             right(width + 1);
-            drawPixel(BoxDrawing.LIGHT_DOWN_AND_HORIZONTAL);
+            drawPixel(Box.DOWN_AND_HORIZONTAL);
             down(1);
             drawVerticalLine(totalHeight);
-            drawPixel(BoxDrawing.LIGHT_UP_AND_HORIZONTAL);
+            drawPixel(Box.UP_AND_HORIZONTAL);
             up(totalHeight + 1);
         }
 
@@ -242,10 +242,10 @@ public class Canvas {
         for (int i = 0; i < rowCount - 1; i++) {
             int height = rowHeightArray[i];
             down(height + 1);
-            drawPixel(BoxDrawing.LIGHT_VERTICAL_AND_RIGHT);
+            drawPixel(Box.VERTICAL_AND_RIGHT);
             right(1);
             drawHorizontalLine(totalWidth);
-            drawPixel(BoxDrawing.LIGHT_VERTICAL_AND_LEFT);
+            drawPixel(Box.VERTICAL_AND_LEFT);
             left(totalWidth + 1);
         }
 
@@ -284,7 +284,7 @@ public class Canvas {
                     i++;
                 }
                 else {
-                    sb.append(BoxDrawing.SPACE.val);
+                    sb.append(Box.SPACE.val);
                 }
             }
             String line = sb.toString();
@@ -309,8 +309,8 @@ public class Canvas {
             int targetCol = pixel.col;
             TextPixel targetPixel = findPixel(targetRow, targetCol);
             if (targetPixel != null) {
-                if (BoxDrawing.isValid(targetPixel.value) && BoxDrawing.isValid(pixel.value)) {
-                    targetPixel.value = BoxDrawing.merge(targetPixel.value, pixel.value).val;
+                if (Box.isValid(targetPixel.value) && Box.isValid(pixel.value)) {
+                    targetPixel.value = Box.merge(targetPixel.value, pixel.value).val;
                 }
                 else {
                     targetPixel.value = pixel.value;

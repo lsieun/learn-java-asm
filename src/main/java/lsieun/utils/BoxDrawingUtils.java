@@ -1,7 +1,7 @@
 package lsieun.utils;
 
 import lsieun.asm.analysis.InsnText;
-import lsieun.drawing.canvas.BoxDrawing;
+import lsieun.drawing.canvas.Box;
 import lsieun.drawing.canvas.Canvas;
 import lsieun.drawing.canvas.Drawable;
 import lsieun.drawing.canvas.TextAlign;
@@ -35,32 +35,32 @@ public class BoxDrawingUtils {
 
             canvas.moveTo(currentRow, 0);
             if (i < min || i > max) {
-                canvas.drawPixel(BoxDrawing.SPACE);
+                canvas.drawPixel(Box.SPACE);
             }
             else if ((min == max)) {
                 // NOTE: 如果min和max相等，那么 i == min == max。
                 //       由于第1个条件的判断，此时min < i < max，再加上min == max，所以i == min == max。
-                canvas.drawPixel(BoxDrawing.LIGHT_VERTICAL_AND_RIGHT);
+                canvas.drawPixel(Box.VERTICAL_AND_RIGHT);
                 canvas.right(1);
                 canvas.drawHorizontalLine(n - 1);
             }
             else if (i == min) {
-                canvas.drawPixel(BoxDrawing.LIGHT_DOWN_AND_RIGHT);
+                canvas.drawPixel(Box.DOWN_AND_RIGHT);
                 canvas.right(1);
                 canvas.drawHorizontalLine(n - 1);
             }
             else if (i == max) {
-                canvas.drawPixel(BoxDrawing.LIGHT_UP_AND_RIGHT);
+                canvas.drawPixel(Box.UP_AND_RIGHT);
                 canvas.right(1);
                 canvas.drawHorizontalLine(n - 1);
             }
             else if (contains(array, i)) {
-                canvas.drawPixel(BoxDrawing.LIGHT_VERTICAL_AND_RIGHT);
+                canvas.drawPixel(Box.VERTICAL_AND_RIGHT);
                 canvas.right(1);
                 canvas.drawHorizontalLine(n - 1);
             }
             else {
-                canvas.drawPixel(BoxDrawing.LIGHT_VERTICAL);
+                canvas.drawPixel(Box.VERTICAL);
             }
 
             List<String> lines = insnText.toLines(node);
@@ -76,13 +76,13 @@ public class BoxDrawingUtils {
             }
 
             if (lines.size() > 1) {
-                BoxDrawing ch;
+                Box ch;
                 String format2 = "%4s %s";
                 if (i >= min && i <= max) {
-                    ch = BoxDrawing.LIGHT_VERTICAL;
+                    ch = Box.VERTICAL;
                 }
                 else {
-                    ch = BoxDrawing.SPACE;
+                    ch = Box.SPACE;
                 }
 
                 for (int j = 1; j < lines.size(); j++) {

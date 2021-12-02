@@ -1,6 +1,6 @@
 package lsieun.asm.analysis.graph;
 
-import lsieun.drawing.canvas.BoxDrawing;
+import lsieun.drawing.canvas.Box;
 import lsieun.drawing.canvas.Canvas;
 import lsieun.drawing.canvas.TextDirection;
 import lsieun.drawing.theme.line.ContinuousLine;
@@ -73,9 +73,9 @@ public class TextGraph {
                 int col = currentBox.col + currentBox.width / 2;
 
                 canvas.moveTo(rowStart, col);
-                canvas.drawPixel(BoxDrawing.LIGHT_DOWN_AND_HORIZONTAL);
+                canvas.drawPixel(Box.DOWN_AND_HORIZONTAL);
                 canvas.moveTo(rowStop, col);
-                canvas.drawPixel(BoxDrawing.LIGHT_UP_AND_HORIZONTAL);
+                canvas.drawPixel(Box.UP_AND_HORIZONTAL);
                 canvas.moveTo(rowStart + 1, col).drawVerticalLine(rowStop - rowStart - 1);
             }
 
@@ -88,9 +88,9 @@ public class TextGraph {
                 int colStop = currentBox.col + currentBox.width + 1 + (i + 1) * COL_SPACE;
 
                 canvas.moveTo(rowStart, colStart);
-                canvas.drawPixel(BoxDrawing.LIGHT_VERTICAL_AND_RIGHT);
+                canvas.drawPixel(Box.VERTICAL_AND_RIGHT);
                 canvas.moveTo(rowStop, colStart);
-                canvas.drawPixel(BoxDrawing.LIGHT_VERTICAL_AND_RIGHT);
+                canvas.drawPixel(Box.VERTICAL_AND_RIGHT);
 
                 if (rowStart < rowStop) {
                     ContinuousLine line = new ContinuousLine();

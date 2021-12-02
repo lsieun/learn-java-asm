@@ -41,6 +41,11 @@ public class HelloWorldFrameTree {
         InsnText insnText = new InsnText();
 
         switch (option) {
+            case 0: {
+                Analyzer<BasicValue> analyzer = new Analyzer<>(new SimpleVerifier());
+                FrameUtils.printGraph(owner, mn, analyzer, ValueUtils::fromBasicValue2String);
+                break;
+            }
             case 1:
                 print(owner, mn, new BasicInterpreter(), null);
                 break;
