@@ -5,7 +5,7 @@ import lsieun.cst.Const;
 import lsieun.drawing.canvas.Canvas;
 import lsieun.drawing.canvas.TextAlign;
 import lsieun.drawing.theme.shape.Rectangle;
-import lsieun.drawing.theme.table.FixedWithOneLineTable;
+import lsieun.drawing.theme.table.FixedWidthOneLineTable;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
@@ -180,7 +180,7 @@ public class FrameUtils {
             }
             index -= valueSize;
         }
-        FixedWithOneLineTable stack_table = new FixedWithOneLineTable(matrix, TextAlign.CENTER, 25);
+        FixedWidthOneLineTable stack_table = new FixedWidthOneLineTable(matrix, TextAlign.CENTER, 25);
         canvas.draw(3, 5, stack_table);
 
         // local variable label
@@ -192,7 +192,7 @@ public class FrameUtils {
         for (int i = 0; i < maxLocals; i++) {
             local_variable_matrix[0][i] = "" + i;
         }
-        FixedWithOneLineTable local_table = new FixedWithOneLineTable(local_variable_matrix, TextAlign.CENTER, 3);
+        FixedWidthOneLineTable local_table = new FixedWidthOneLineTable(local_variable_matrix, TextAlign.CENTER, 3);
         canvas.draw(maxStack * 2 + 1, local_variable_col, local_table);
 
         // local variable value

@@ -3,10 +3,10 @@ package lsieun.drawing.theme.table;
 import lsieun.drawing.canvas.Drawable;
 import lsieun.drawing.canvas.TextAlign;
 
-public class FixedWithOneLineTable extends OneLineTable implements Drawable {
+public class FixedWidthOneLineTable extends OneLineTable implements Drawable {
     public final int fixedWidth;
 
-    public FixedWithOneLineTable(String[][] matrix, TextAlign align, int fixedWidth) {
+    public FixedWidthOneLineTable(String[][] matrix, TextAlign align, int fixedWidth) {
         super(matrix, align);
         this.fixedWidth = fixedWidth;
     }
