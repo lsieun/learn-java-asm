@@ -230,16 +230,9 @@ public class MethodStackMapFrame02Visitor extends ClassVisitor {
             if (list == null || list.size() == 0) return EMPTY;
             int size = list.size();
             String[] array = new String[size];
-            for (int i = 0; i < size - 1; i++) {
+            for (int i = 0; i < size; i++) {
                 Object item = list.get(i);
                 array[i] = item2Str(item);
-            }
-
-            {
-                // 最后一个值
-                int lastIndex = size - 1;
-                Object item = list.get(lastIndex);
-                array[lastIndex] = item2Str(item);
             }
 
             return array2Str(array);

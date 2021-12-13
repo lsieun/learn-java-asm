@@ -129,16 +129,12 @@ public class MethodStackMapFrameVisitor extends ClassVisitor {
         }
 
         private String list2Str(List<Object> list) {
+            if (list == null || list.size() == 0) return "[]";
             int size = list.size();
             String[] array = new String[size];
-            for (int i = 0; i < size - 1; i++) {
+            for (int i = 0; i < size; i++) {
                 Object item = list.get(i);
                 array[i] = item2Str(item);
-            }
-            if (size > 0) {
-                int lastIndex = size - 1;
-                Object item = list.get(lastIndex);
-                array[lastIndex] = item2Str(item);
             }
             return Arrays.toString(array);
         }
