@@ -1,7 +1,6 @@
 package lsieun.utils;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Label;
+import org.objectweb.asm.*;
 
 public class ASMUtilsCore {
     public int read(ClassReader cr, int off, char[] buf,
@@ -46,5 +45,31 @@ public class ASMUtilsCore {
             }
         }
         return -1;
+    }
+
+    // org.objectweb.asm.commons.GeneratorAdapter.swap(org.objectweb.asm.Type, org.objectweb.asm.Type)
+    public static void swap(MethodVisitor mv, Type stackTop, Type belowTop) {
+        if (stackTop.getSize() == 1) {
+            if (belowTop.getSize() == 1) {
+                // Top = 1, below = 1
+                mv.visitInsn(Opcodes.SWAP);
+            }
+            else {
+                // Top = 1, below = 2
+                mv.visitInsn(Opcodes.DUP_X2);
+                mv.visitInsn(Opcodes.POP);
+            }
+        }
+        else {
+            if (belowTop.getSize() == 1) {
+                // Top = 2, below = 1
+                mv.visitInsn(Opcodes.DUP2_X1);
+            }
+            else {
+                // Top = 2, below = 2
+                mv.visitInsn(Opcodes.DUP2_X2);
+            }
+            mv.visitInsn(Opcodes.POP2);
+        }
     }
 }

@@ -18,6 +18,8 @@ public class ClassRemoveMethodVisitor extends ClassVisitor {
         if (name.equals(methodName) && descriptor.equals(methodDesc)) {
             return null;
         }
-        return super.visitMethod(access, name, descriptor, signature, exceptions);
+        else {
+            return super.visitMethod(access, name, descriptor, signature, exceptions);
+        }
     }
 }

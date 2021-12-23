@@ -18,6 +18,8 @@ public class ClassRemoveFieldVisitor extends ClassVisitor {
         if (name.equals(fieldName) && descriptor.equals(fieldDesc)) {
             return null;
         }
-        return super.visitField(access, name, descriptor, signature, value);
+        else {
+            return super.visitField(access, name, descriptor, signature, value);
+        }
     }
 }

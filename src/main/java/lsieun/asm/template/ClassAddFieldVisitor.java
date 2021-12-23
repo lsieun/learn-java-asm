@@ -27,7 +27,7 @@ public class ClassAddFieldVisitor extends ClassVisitor {
     @Override
     public void visitEnd() {
         if (!isFieldPresent) {
-            FieldVisitor fv = cv.visitField(fieldAccess, fieldName, fieldDesc, null, null);
+            FieldVisitor fv = super.visitField(fieldAccess, fieldName, fieldDesc, null, null);
             if (fv != null) {
                 fv.visitEnd();
             }

@@ -37,7 +37,7 @@ public class InfoClassVisitor extends ClassVisitor {
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-        String line = String.format("ClassVisitor.visitMethod(%s, %s, %s, %s, %s);", getAccess(access), name, descriptor, signature, exceptions);
+        String line = String.format("ClassVisitor.visitMethod(%s, %s, %s, %s, %s);", getAccess(access), name, descriptor, signature, Arrays.toString(exceptions));
         System.out.println(line);
 
         MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
@@ -61,6 +61,25 @@ public class InfoClassVisitor extends ClassVisitor {
         }
         else if ((access & Opcodes.ACC_PRIVATE) != 0) {
             list.add("ACC_PRIVATE");
+        }
+
+        if ((access & Opcodes.ACC_STATIC) != 0) {
+            list.add("ACC_STATIC");
+        }
+        if ((access & Opcodes.ACC_FINAL) != 0) {
+            list.add("ACC_FINAL");
+        }
+        if ((access & Opcodes.ACC_NATIVE) != 0) {
+            list.add("ACC_NATIVE");
+        }
+        if ((access & Opcodes.ACC_INTERFACE) != 0) {
+            list.add("ACC_INTERFACE");
+        }
+        if ((access & Opcodes.ACC_ABSTRACT) != 0) {
+            list.add("ACC_ABSTRACT");
+        }
+        if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
+            list.add("ACC_SYNTHETIC");
         }
         return list.toString();
     }
