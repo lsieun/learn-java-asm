@@ -44,7 +44,10 @@ public class ControlFlowGraphRun {
         }
 
         //（4）进行图形化显示
-        display(cn.name, targetNode, 2);
+        System.out.println("Origin:");
+        display(cn.name, targetNode, ControlFlowGraphType.NONE);
+        System.out.println("Control Flow Graph:");
+        display(cn.name, targetNode, ControlFlowGraphType.STANDARD);
 
         //（5）打印复杂度
         int complexity = CyclomaticComplexity.getCyclomaticComplexity(cn.name, targetNode);
@@ -52,11 +55,11 @@ public class ControlFlowGraphRun {
         System.out.println(line);
     }
 
-    private static void display(String owner, MethodNode mn, int option) throws AnalyzerException {
+    private static void display(String owner, MethodNode mn, ControlFlowGraphType option) throws AnalyzerException {
         //（1）准备数据
         InsnBlock[] blocks;
         switch (option) {
-            case 0: {
+            case NONE: {
                 InsnText insnText = new InsnText();
                 List<String> lines = insnText.toLines(mn.instructions.toArray());
 
@@ -67,28 +70,33 @@ public class ControlFlowGraphRun {
                 blocks[0] = block;
                 break;
             }
-            case 1: {
+            case ONE_INSN_ONE_BOX: {
                 ControlFlowEdgeAnalyzer<BasicValue> analyzer = new ControlFlowEdgeAnalyzer<>(new BasicInterpreter());
                 analyzer.analyze(owner, mn);
                 blocks = analyzer.getBlocks();
                 break;
             }
-            case 2: {
+            case MULTI_INSN_ONE_BOX:
+            case STANDARD: {
                 ControlFlowEdgeAnalyzer<BasicValue> analyzer = new ControlFlowEdgeAnalyzer2<>(new BasicInterpreter());
                 analyzer.analyze(owner, mn);
                 blocks = analyzer.getBlocks();
                 break;
             }
-            case 3: {
+            case EXPERIMENT_ONE_INSN_ONE_BOX: {
                 ControlFlowAnalyzer2 analyzer = new ControlFlowAnalyzer2();
                 analyzer.analyze(owner, mn);
                 blocks = analyzer.getBlocks();
                 break;
             }
-            default: {
+            case EXPERIMENT_MULTI_INSN_ONE_BOX: {
                 ControlFlowGraphAnalyzer analyzer = new ControlFlowGraphAnalyzer();
                 analyzer.analyze(mn);
                 blocks = analyzer.getBlocks();
+                break;
+            }
+            default: {
+                throw new RuntimeException("unknown type: " + option);
             }
         }
 
