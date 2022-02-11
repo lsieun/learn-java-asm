@@ -32,6 +32,28 @@
 
 ---
 
+如果我们学会了Java ASM之后，可能还是需要一个具体的应用场景来进行使用，这个场景就是由 [Java Agent](https://lsieun.github.io/java-agent/java-agent-01.html) 开启的。
+
+那么，Java ASM和Java Agent这两者之间是什么关系呢？
+Java ASM是一个操作字节码的工具（tool），而Java Agent提供了修改字节码的机会（opportunity）。
+想像这样一个场景：
+有一个JVM正在运行，突然Java Agent在JVM上打开一扇大门，Java ASM通过大门冲进JVM里面，就要开始修改字节码了。
+
+```text
+.class --- Java ASM --- Java Agent --- JVM
+```
+
+再打个比方，Java ASM就是“一匹千里马”，而Java Agent就是“伯乐”。
+如果遇不到“伯乐”，可能“千里马”的才能就埋没了；正因为有了“伯乐”，“千里马”就有了施展才能的机会。
+
+```text
+世有伯乐，然后有千里马。
+千里马常有，而伯乐不常有。
+故虽有名马，祗辱于奴隶人之手，骈死于槽枥之间，不以千里称也。
+```
+
+---
+
 ## 1. 如何使用
 
 ### 1.1 代码下载
