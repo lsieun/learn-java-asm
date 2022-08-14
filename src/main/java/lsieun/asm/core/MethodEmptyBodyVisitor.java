@@ -59,9 +59,21 @@ public class MethodEmptyBodyVisitor extends ClassVisitor {
         if (returnType.getSort() == Type.VOID) {
             mv.visitInsn(RETURN);
         }
-        else if (returnType.getSort() >= Type.BOOLEAN && returnType.getSort() <= Type.DOUBLE) {
-            mv.visitInsn(returnType.getOpcode(ICONST_1));
-            mv.visitInsn(returnType.getOpcode(IRETURN));
+        else if (returnType.getSort() >= Type.BOOLEAN && returnType.getSort() <= Type.INT) {
+            mv.visitInsn(ICONST_1);
+            mv.visitInsn(IRETURN);
+        }
+        else if (returnType.getSort() == Type.LONG) {
+            mv.visitInsn(LCONST_0);
+            mv.visitInsn(LRETURN);
+        }
+        else if (returnType.getSort() == Type.FLOAT) {
+            mv.visitInsn(FCONST_0);
+            mv.visitInsn(FRETURN);
+        }
+        else if (returnType.getSort() == Type.DOUBLE) {
+            mv.visitInsn(DCONST_0);
+            mv.visitInsn(DRETURN);
         }
         else {
             mv.visitInsn(ACONST_NULL);

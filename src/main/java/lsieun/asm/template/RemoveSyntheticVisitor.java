@@ -22,6 +22,6 @@ public class RemoveSyntheticVisitor extends ClassVisitor {
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-        return super.visitMethod(access & (~Opcodes.ACC_SYNTHETIC), name, descriptor, signature, exceptions);
+        return super.visitMethod(access & ~(Opcodes.ACC_SYNTHETIC | Opcodes.ACC_BRIDGE), name, descriptor, signature, exceptions);
     }
 }
