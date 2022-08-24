@@ -95,7 +95,17 @@ public class MethodParameterVisitor extends ClassVisitor {
                 printMessage("Method Exit:");
                 if (opcode == IRETURN) {
                     super.visitInsn(DUP);
-                    printInt();
+                    Type methodType = Type.getMethodType(methodDesc);
+                    Type returnType = methodType.getReturnType();
+                    if (returnType == Type.BOOLEAN_TYPE) {
+                        printBoolean();
+                    }
+                    else if (returnType == Type.CHAR_TYPE) {
+                        printChar();
+                    }
+                    else {
+                        printInt();
+                    }
                 }
                 else if (opcode == FRETURN) {
                     super.visitInsn(DUP);
