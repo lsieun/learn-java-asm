@@ -2,6 +2,7 @@ package lsieun.asm.core;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -80,6 +81,12 @@ public class MethodParameterVisitor extends ClassVisitor {
                 }
                 else {
                     printMessage("No Support");
+                    if (size == 1) {
+                        super.visitInsn(Opcodes.POP);
+                    }
+                    else {
+                        super.visitInsn(Opcodes.POP2);
+                    }
                 }
                 slotIndex += size;
             }
