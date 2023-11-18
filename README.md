@@ -1,12 +1,6 @@
 # Learn Java ASM
 
 [![Gitee](https://img.shields.io/badge/Gitee-white.svg?style=flat-square&logo=gitee&logoColor=C71D23)](https://gitee.com/lsieun/learn-java-asm)
-![license](https://badg.now.sh/gitee/license/lsieun/learn-java-asm)
-![Gitee stars](https://badg.now.sh/gitee/stars/lsieun/learn-java-asm)
-![Gitee forks](https://badg.now.sh/gitee/forks/lsieun/learn-java-asm)
-![Gitee issues](https://badg.now.sh/gitee/issues/lsieun/learn-java-asm)
-![Gitee last commit](https://badg.now.sh/gitee/last-commit/lsieun/learn-java-asm)
-
 [![Github](https://img.shields.io/badge/GitHub-white.svg?style=flat-square&logo=github&logoColor=181717)](https://github.com/lsieun/learn-java-asm)
 ![GitHub](https://img.shields.io/github/license/lsieun/learn-java-asm)
 ![GitHub stars](https://img.shields.io/github/stars/lsieun/learn-java-asm.svg)
@@ -17,8 +11,6 @@
 :maple_leaf: Java [ASM](https://asm.ow2.io/) is an open-source java library for manipulating bytecode.
 
 本项目旨在系统地介绍如何学习Java ASM的知识，主要涉及Core API、OPCODE和Tree API等内容。至于学习的预期目标就是，用一个形象的说法来讲，让字节码在你的手中“跳舞”：看看你的左手，一个完整的ClassFile拆解成不同粒度的字节码内容；看看你的右手，不同粒度的字节码内容又重新组织成一个ClassFile结构。
-
-如果你觉得代码还不错（ :sparkling_heart: ），欢迎加星（ :star: ）支持！
 
 ```text
            _______                                 ,        _        _        
