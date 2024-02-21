@@ -1,13 +1,14 @@
 package sample;
 
 import java.io.PrintStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
 public class ParameterUtils {
-    private static final DateFormat fm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final ThreadLocal<SimpleDateFormat> formatter = ThreadLocal.withInitial(
+            () -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    );
 
     public static void printValueOnStack(boolean value) {
         System.out.println("    " + value);
@@ -44,17 +45,13 @@ public class ParameterUtils {
     public static void printValueOnStack(Object value) {
         if (value == null) {
             System.out.println("    " + value);
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             System.out.println("    " + value);
-        }
-        else if (value instanceof Date) {
-            System.out.println("    " + fm.format(value));
-        }
-        else if (value instanceof char[]) {
-            System.out.println("    " + Arrays.toString((char[])value));
-        }
-        else {
+        } else if (value instanceof Date) {
+            System.out.println("    " + formatter.get().format(value));
+        } else if (value instanceof char[]) {
+            System.out.println("    " + Arrays.toString((char[]) value));
+        } else {
             System.out.println("    " + value.getClass() + ": " + value.toString());
         }
     }
