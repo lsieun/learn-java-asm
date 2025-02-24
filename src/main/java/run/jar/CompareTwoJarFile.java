@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 public class CompareTwoJarFile {
+    // TODO: 应该先比较两个文件内容是否相等，使用 Files.mismatch，或使用 byte[] 比对
     public static void main(String[] args) {
         String jarPath1 = "D:/git-repo/learn-java-asm/first.jar";
         String jarPath2 = "D:/git-repo/learn-java-asm/second.jar";

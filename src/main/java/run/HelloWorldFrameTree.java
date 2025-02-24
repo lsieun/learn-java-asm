@@ -33,7 +33,7 @@ public class HelloWorldFrameTree {
         String owner = cn.name;
         List<MethodNode> methods = cn.methods;
         for (MethodNode mn : methods) {
-            print(owner, mn, 5);
+            print(owner, mn, 0);
         }
     }
 
